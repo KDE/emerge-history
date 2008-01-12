@@ -131,17 +131,17 @@ class baseclass:
         self.setDirectories()
 
         ok = True
-        if command == "fetch":          ok = self.fetch()
-        elif command == "cleanimage":   self.cleanup()
-        elif command == "unpack":   ok = self.unpack()
-        elif command == "compile":  ok = self.compile()
-        elif command == "configure":  ok = self.compile()
-        elif command == "make":  ok = self.compile()
-        elif command == "install": ok = self.install()
-        elif command == "qmerge":   ok = self.qmerge()
-        elif command == "unmerge":   ok = self.unmerge()
-        elif command == "manifest":   ok = self.manifest()
-        elif command == "package":  ok = self.make_package()
+        if command   == "fetch":       ok = self.fetch()
+        elif command == "cleanimage":       self.cleanup()
+        elif command == "unpack":      ok = self.unpack()
+        elif command == "compile":     ok = self.compile()
+        elif command == "configure":   ok = self.compile()
+        elif command == "make":        ok = self.compile()
+        elif command == "install":     ok = self.install()
+        elif command == "qmerge":      ok = self.qmerge()
+        elif command == "unmerge":     ok = self.unmerge()
+        elif command == "manifest":    ok = self.manifest()
+        elif command == "package":     ok = self.make_package()
         else:
             ok = utils.error( "command %s not understood" % command )
 
