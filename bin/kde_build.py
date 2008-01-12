@@ -39,6 +39,7 @@ class kde_interface:
         self.buildTests     = False
         self.noCopy         = False
         self.noFetch        = False
+        self.noUpdate       = False
         self.traditional    = True
 
         self.rootdir        = rootdir
@@ -51,6 +52,8 @@ class kde_interface:
             self.noFetch    = True
         if os.getenv( "EMERGE_NOCOPY" )     == "True":
             self.noCopy     = True
+        if os.getenv( "EMERGE_NOUPDATE" )   == "True":
+            self.noUpdate   = True
         if os.getenv( "EMERGE_BUILDTESTS" ) == "True":
             self.buildTests = True
         if os.getenv( "directory_layout" ) == "installer":
@@ -214,8 +217,9 @@ class kde_interface:
             buildtype = "-DCMAKE_BUILD_TYPE=%s" % buildType
             builddir = "%s-%s" % ( builddir, buildType )
 
-        os.chdir( self.workdir )
-        utils.cleanDirectory( builddir )
+        if not self.noUpdate:
+            os.chdir( self.workdir )
+            utils.cleanDirectory( builddir )
         os.chdir( builddir )
 
         command = r"""cmake -G "%s" %s %s %s""" % \

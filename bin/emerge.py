@@ -123,6 +123,12 @@ if ( ncopy == "True" ):
 else:
     nocopy = False
 
+nupdate=os.getenv( "EMERGE_NOUPDATE" )
+if ( nupdate == "True" ):
+    noupdate = True
+else:
+    noupdate = False
+
 verb = os.getenv( "EMERGE_VERBOSE" )
 if verb == None or not verb.isdigit():
     verbose = 1
@@ -154,6 +160,8 @@ for i in sys.argv:
         os.environ["EMERGE_VERBOSE"] = str( verbose )
     elif ( i == "--nocopy" ):
         os.environ["EMERGE_NOCOPY"] = str( True )
+    elif ( i == "--noupdate" ):
+        os.environ["EMERGE_NOUPDATE"] = str( True )
     elif ( i in ["--version-dir", "--version-package", "--print-installable", "--print-installed", "--print-targets"] ):
         buildAction = i[2:]
         stayQuiet = True
