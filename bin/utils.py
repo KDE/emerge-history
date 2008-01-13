@@ -9,6 +9,7 @@ import httplib
 import ftplib
 import os
 import sys
+import re
 import urlparse
 import shutil
 import zipfile
@@ -17,6 +18,7 @@ import hashlib
 import subprocess
 import __builtin__
 import imp
+import info
 
 import portage_versions
 
@@ -312,8 +314,8 @@ def getCategoryPackageVersion( path ):
     ( head, package ) = os.path.split( head )
     ( head, category ) = os.path.split( head )
 
-    (foo, ext) = os.path.splitext( file )
-    ( package, version, foo2 ) = portage_versions.pkgsplit(foo)
+    (filename, ext) = os.path.splitext( file )
+    ( package, version ) = packageSplit( filename )
     if verbose() > 1:
         print "category: %s, package: %s, version: %s" %( category, package, version )
     return [ category, package, version ]
@@ -347,15 +349,29 @@ def getCategory( package ):
                         print "found:", cat, pack
                     return cat
 
+def getAllTags( category, package, version ):
+    """ """
+    if hasattr( mod, 'subinfo' ):
+        info = mod.subinfo()
+        mod = __import__( getFilename( category, package, version ) )
+        info = mod.subinfo()
+        return info.svnTargets
+    else:
+        return dict()
+    
 def getNewestVersion( category, package ):
     """
     returns the newest version of this category/package
     """
-    if( category == None ):
-        die("Could not find package %s" % package )
-        
 #    if utils.verbose() >= 1:
 #        print "getNewestVersion:", category, package
+    if( category == None ):
+        die("Empty category for package '%s'" % package )
+    if category not in os.listdir( getPortageDir() ):
+        die( "could not find category '%s'" % category )
+    if package not in os.listdir( os.path.join( getPortageDir(), category ) ):
+        die( "could not find package '%s' in category '%s'" % ( package, category ) )
+        
     packagepath = os.path.join( getPortageDir(), category, package )
 
     versions = []
@@ -376,16 +392,40 @@ def getNewestVersion( category, package ):
             if ( ret == 1 ):
                 tmpver = ver
 
-    ret = portage_versions.catpkgsplit( tmpver )
+    ret = packageSplit( tmpver )
     #print "ret:", ret
-    return ret[ 2 ]
+    return ret[ 1 ]
+
+def isVersion( part ):
+    ver_regexp = re.compile("^(cvs\\.)?(\\d+)((\\.\\d+)*)([a-z]?)((_(pre|p|beta|alpha|rc)\\d*)*)(-r(\\d+))?$")
+    if ver_regexp.match( part ):
+        return True
+    else:
+        return False
+
+def packageSplit( fullname ):
+    """ instead of using portage_versions.catpkgsplit use this function now """
+    splitname = fullname.split('-')
+    for x in range( len( splitname ) ):
+        if isVersion( splitname[ x ] ):
+            break
+    package = splitname[ 0 ]
+    version = splitname[ x ]
+    for part in splitname[ 1 : x ]:
+        package += '-' + part
+    for part in splitname[ x  + 1: ]:
+        version += '-' + part
+    return [ package, version ]
 
 def getDependencies( category, package, version ):
     """
     returns the dependencies of this package as list of strings:
     category/package
     """
-    f = open( getFilename( category, package, version ), "rb" )
+    if os.path.isfile( getFilename( category, package, version ) ):
+        f = open( getFilename( category, package, version ), "rb" )
+    else:
+        die( "package name %s/%s-%s unknown" % ( category, package, version ) )
     lines = f.read()
     #print "lines:", lines
     # get DEPENDS=... lines
@@ -399,18 +439,25 @@ def getDependencies( category, package, version ):
         if ( inDepend == True ):
             if ( line.find( "\"\"\"" ) != -1 ):
                 break
-            deplines.append( line )
+            deplines.append( [ line, 'default' ] )
         if ( line.startswith( "DEPEND" ) ):
             inDepend = True
+    if not len(deplines) > 0:
+        mod = __import__( getFilename( category, package, version ) )
+        if hasattr( mod, 'subinfo' ):
+            info = mod.subinfo()
+            for line in info.hardDependencies.keys():
+                deplines.append( [line, info.hardDependencies[ line ] ] )
+                #warning( "%s %s" % (line, info.hardDependencies[ line ] ) )
 
 #    if utils.verbose() >= 1 and len( deplines ) > 0:
 #        print "deplines:", deplines
 
     deps = []
     for line in deplines:
-        (category, package) = line.split( "/" )
+        (category, package) = line[ 0 ].split( "/" )
         version = getNewestVersion( category, package )
-        deps.append( [ category, package, version ] )
+        deps.append( [ category, package, version, line[ 1 ] ] )
     return deps
 
 def solveDependencies( category, package, version, deplist ):
@@ -420,10 +467,14 @@ def solveDependencies( category, package, version, deplist ):
     if ( version == "" ):
         version = getNewestVersion( category, package )
 
-    if [ category, package, version ] in deplist:
-        deplist.remove( [ category, package, version ] )
+    tag = 1
+    if ( tag == "" ):
+        tag = getAllTags( category, package, version ).keys()[ 0 ]
+
+    if [ category, package, version, tag ] in deplist:
+        deplist.remove( [ category, package, version, tag ] )
         
-    deplist.append( [ category, package, version ] )
+    deplist.append( [ category, package, version, tag ] )
 
     mydeps = getDependencies( category, package, version )
 #    if utils.verbose() >= 1:
@@ -457,12 +508,20 @@ def getInstallables():
 def printTargets( category, package, version ):
     """ """
     if verbose() > 1:
-        print "importing file %s" % os.path.join( getPortageDir(), category, package, "%s-%s.py" % ( package, version ) )
-    mod=__import__( os.path.join( getPortageDir(), category, package, "%s-%s.py" % ( package, version ) ) )
+        print "importing file %s" % getFilename( category, package, version )
+    mod = __import__( getFilename( category, package, version ) )
     packageInfo = mod.subinfo()
     for i in packageInfo.svnTargets.keys():
+        if packageInfo.defaultTarget == i:
+            print '*',
+        else:
+            print ' ',
         print i
-    for i in packageInfo.Targets.keys():
+    for i in packageInfo.targets.keys():
+        if packageInfo.defaultTarget == i:
+            print '*',
+        else:
+            print ' ',
         print i
     
 def printInstallables():
@@ -477,9 +536,8 @@ def printInstalled():
     packlen = 25
     installed = getInstallables()
     for category, package, version in installed:
-        if not isInstalled( category, package, version ):
-            installed.remove( [ category, package, version ] )
-        print category + " " * ( catlen - len( category ) ) + package + " " * ( packlen - len( package ) ) + version
+        if isInstalled( category, package, version ):
+            print category + " " * ( catlen - len( category ) ) + package + " " * ( packlen - len( package ) ) + version
 
 def warning( message ):
     if verbose() > 0:

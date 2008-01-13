@@ -2,19 +2,23 @@ import base
 import utils
 import os
 import sys
+import info
 
-DEPEND = """
-kde/kdelibs
-"""
-
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.svnTargets['4.0.0'] = 'tags/KDE/4.0.0/kdepimlibs'
+        self.svnTargets['svnHEAD'] = 'trunk/KDE/kdepimlibs'
+        self.defaultTarget = 'svnHEAD'
+    
+    def setDependencies( self ):
+        self.hardDependencies['kde/kdelibs'] = 'default'
+        
 class subclass(base.baseclass):
     def __init__(self):
         base.baseclass.__init__( self, "" )
         self.instsrcdir = "kdepimlibs"
+        self.subinfo = subinfo()
 
-    def kdeSvnPath( self ):
-        return "trunk/KDE/kdepimlibs"
-        
     def unpack( self ):
         return self.kdeSvnUnpack()
 

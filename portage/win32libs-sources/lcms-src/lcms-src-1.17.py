@@ -3,7 +3,7 @@ import os
 import shutil
 import re
 import utils
-from utils import die
+import info
 
 PACKAGE_NAME         = "lcms"
 PACKAGE_VER          = "1.17"
@@ -17,15 +17,20 @@ SRC_URI= """
 http://www.littlecms.com/lcms-1.17.tar.gz
 """
 
-DEPEND = """
-dev-util/win32libs
-"""
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.svnTargets['1.17'] = SRC_URI
+        self.defaultTarget = '1.17'
+    
+    def setDependencies( self ):
+        self.hardDependencies['dev-util/win32libs'] = 'default'
 
 class subclass(base.baseclass):
   def __init__(self):
     base.baseclass.__init__( self, SRC_URI )
     self.instsrcdir = PACKAGE_FULL_NAME
     self.createCombinedPackage = True
+    self.subinfo = subinfo()
 
   def execute( self ):
     base.baseclass.execute( self )

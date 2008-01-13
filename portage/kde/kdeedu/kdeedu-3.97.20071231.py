@@ -2,24 +2,28 @@ import base
 import utils
 import os
 import sys
+import info
 
-DEPEND = """
-kde/kdebase
-"""
-OPTIONAL_DEPEND = """
-kdesupport/eigen
-win32libs-sources/cfitsio-src
-win32libs-sources/libnova-src
-win32libs-sources/openbabel-src
-"""
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.svnTargets['4.0.0'] = 'tags/KDE/4.0.0/kdeedu'
+        self.svnTargets['svnHEAD'] = 'trunk/KDE/kdeedu'
+        self.defaultTarget = 'svnHEAD'
+    
+    def setDependencies( self ):
+        self.hardDependencies['kde/kdebase'] = 'default'
+        
+        self.softDependencies['kdesupport/eigen'] = 'default'
+        self.softDependencies['win32libs-sources/cfitsio-src'] = 'default'
+        self.softDependencies['win32libs-sources/libnova-src'] = 'default'
+        self.softDependencies['win32libs-sources/openbabel-src'] = 'default'
+    
 class subclass(base.baseclass):
     def __init__(self):
         base.baseclass.__init__( self, "" )
         self.instsrcdir = "kdeedu"
+        self.subinfo = subinfo()
 
-    def kdeSvnPath( self ):
-        return "trunk/KDE/kdeedu"
-        
     def unpack( self ):
         return self.kdeSvnUnpack()
 

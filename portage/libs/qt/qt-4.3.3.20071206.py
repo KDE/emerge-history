@@ -3,25 +3,35 @@ import utils
 import shutil
 from utils import die
 import os
+import info
 
 PACKAGE_NAME         = "qt"
 PACKAGE_VER          = "4.3.3"
 PACKAGE_FULL_VER     = "4.3.3-2"
 PACKAGE_FULL_NAME    = "%s-win-opensource-src-%s" % ( PACKAGE_NAME, PACKAGE_VER )
 
-DEPEND = """
-dev-util/win32libs
-virtual/base
-"""
+#DEPEND = """
+#dev-util/win32libs
+#virtual/base
+#"""
 
 SRC_URI= """
 ftp://ftp.tu-chemnitz.de/pub/Qt/qt/source/""" + PACKAGE_FULL_NAME + """.zip
 """
 
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.targets['4.3.3-2'] = SRC_URI
+        self.defaultTarget = '4.3.3-2'
+    
+    def setDependencies( self ):
+        self.hardDependencies['virtual/base'] = 'default'
+    
 class subclass(base.baseclass):
   def __init__(self):
     base.baseclass.__init__( self, SRC_URI )
     self.instsrcdir = PACKAGE_FULL_NAME + "-" + self.compiler
+    self.subinfo = subinfo()
 
   def unpack( self ):
     qtsrcdir = os.path.join( self.workdir, self.instsrcdir )

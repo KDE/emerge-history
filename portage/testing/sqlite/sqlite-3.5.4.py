@@ -4,6 +4,7 @@ import shutil
 import re
 import utils
 from utils import die
+import info
 
 PACKAGE_NAME         = "sqlite"
 PACKAGE_DLL_NAME     = "sqlite3"
@@ -17,12 +18,15 @@ http://www.sqlite.org/sqlitedll-3_5_4.zip
 http://www.sqlite.org/sqlite-amalgamation-3_5_4.zip
 """
 
-DEPEND = """
-"""
-
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.svnTargets['3.5.4'] = SRC_URI
+        self.defaultTarget = '3.5.4'
+    
 class subclass(base.baseclass):
     def __init__( self ):
         base.baseclass.__init__( self, SRC_URI )
+        self.subinfo = subinfo()
     
     def unpack( self ):
         base.baseclass.unpack( self )

@@ -1,18 +1,25 @@
 import base
 import os
 import sys
+import info
 
-DEPEND = """
-dev-util/win32libs
-"""
+#DEPEND = """
+#virtual/base
+#"""
+
+class subinfo(info.infoclass):
+    def setDependencies( self ):
+        self.hardDependencies['virtual/base'] = 'default'
+
+    def setTargets( self ):
+        self.svnTargets['svnHEAD'] = 'trunk/kdesupport/taglib'
+        self.defaultTarget = 'svnHEAD'
 
 class subclass(base.baseclass):
     def __init__(self):
         base.baseclass.__init__( self, "" )
         self.instsrcdir = "taglib"
-
-    def kdeSvnPath( self ):
-        return "trunk/kdesupport/taglib"
+        self.subinfo = subinfo()
 
     def unpack( self ):
         return self.kdeSvnUnpack()

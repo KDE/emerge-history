@@ -2,26 +2,23 @@ import base
 import utils
 import os
 import sys
+import info
 
-
-DEPEND = """
-virtual/base
-dev-util/win32libs
-kdesupport/kdewin32
-kdesupport/qimageblitz
-kdesupport/soprano
-kdesupport/strigi
-kde/kdebase
-"""
-
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.svnTargets['4.0.0'] = 'tags/KDE/4.0.0/kdenetwork'
+        self.svnTargets['svnHEAD'] = 'trunk/KDE/kdenetwork'
+        self.defaultTarget = 'svnHEAD'
+    
+    def setDependencies( self ):
+        self.hardDependencies['kde/kdebase'] = 'default'
+        
 class subclass(base.baseclass):
     def __init__(self):
         base.baseclass.__init__( self, "" )
         self.instsrcdir = "kdenetwork"
+        self.subinfo = subinfo()
 
-    def kdeSvnPath( self ):
-        return "trunk/KDE/kdenetwork"
-        
     def unpack( self ):
         return self.kdeSvnUnpack()
 

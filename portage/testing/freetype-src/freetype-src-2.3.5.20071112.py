@@ -2,6 +2,7 @@ import base
 import os
 import utils
 import shutil
+import info
 
 PACKAGE_NAME         = "freetype"
 PACKAGE_VER          = "2.3.5"
@@ -13,15 +14,20 @@ SRC_URI= """
 http://download.savannah.gnu.org/releases/""" + PACKAGE_NAME + """/""" + PACKAGE_FULL_NAME + """.tar.gz
 """
 
-DEPEND = """
-dev-util/win32libs
-"""
-
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.svnTargets['2.3.5-1'] = SRC_URI
+        self.defaultTarget = '2.3.5-1'
+    
+    def setDependencies( self ):
+        self.hardDependencies['kdesupport/kdewin32'] = 'default'
+    
 class subclass(base.baseclass):
     def __init__(self):
         base.baseclass.__init__( self, SRC_URI )
         self.instsrcdir = PACKAGE_FULL_NAME
         self.createCombinedPackage = True
+        self.subinfo = subinfo()
 
     def execute( self ):
         base.baseclass.execute( self )

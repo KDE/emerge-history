@@ -4,6 +4,7 @@ import shutil
 import re
 import utils
 from utils import die
+import info
 
 PACKAGE_NAME         = "openbabel"
 PACKAGE_VER          = "2.1.1"
@@ -14,20 +15,23 @@ SRC_URI= """
 http://heanet.dl.sourceforge.net/sourceforge/openbabel/""" + PACKAGE_FULL_NAME + """.tar.gz
 """
 
-DEPEND = """
-"""
-
 #
 # this library is used by kdeedu/kalzium
 # thanks to the people from Molekel (http://bioinformatics.org/molekel/wiki/Main/OpenBabel)
 # for making most of it working and providing current instructions
 #
 
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.targets['2.1.1'] = 'http://heanet.dl.sourceforge.net/sourceforge/openbabel/openbabel-2.1.1.tar.gz'
+        self.defaultTarget = '2.1.1'
+        
 class subclass(base.baseclass):
     def __init__(self):
         base.baseclass.__init__( self, SRC_URI )
         self.instsrcdir = PACKAGE_FULL_NAME
         self.createCombinedPackage = True
+        self.subinfo = subinfo()
 
     def unpack( self ):
         if( not base.baseclass.unpack( self ) ):

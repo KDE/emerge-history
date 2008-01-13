@@ -1,4 +1,5 @@
 ﻿import base
+import info
 
 PACKAGE_NAME         = "boost-jam"
 PACKAGE_VER          = "3.1.15"
@@ -9,9 +10,14 @@ SRC_URI= """
 http://downloads.sourceforge.net/boost/""" + PACKAGE_FULL_NAME + """-ntx86.zip
 """
 
-DEPEND = """
-"""
-
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.targets['3.1.15-1'] = SRC_URI
+        self.defaultTarget = '3.1.15-1'
+    
+    def setDependencies( self ):
+        self.hardDependencies['gnuwin32/wget'] = 'default'
+    
 class subclass(base.baseclass):
     def __init__(self):
         base.baseclass.__init__( self, SRC_URI )

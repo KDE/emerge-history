@@ -2,20 +2,23 @@ import base
 import utils
 import os
 import sys
+import info
 
-DEPEND = """
-kde/kdelibs
-"""
-
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.svnTargets['svnHEAD'] = 'trunk/KDE/kdevplatform'
+        self.defaultTarget = 'svnHEAD'
+    
+    def setDependencies( self ):
+        self.hardDependencies['kde/kdelibs'] = 'default'
+    
 class subclass(base.baseclass):
     def __init__(self):
         self.buildType="Debug"
         base.baseclass.__init__( self, "" )
         self.instsrcdir = "kdevplatform"
+        self.subinfo = subinfo()
 
-    def kdeSvnPath( self ):
-        return "trunk/KDE/kdevplatform"
-        
     def unpack( self ):
         return self.kdeSvnUnpack()
 

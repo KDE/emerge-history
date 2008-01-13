@@ -2,30 +2,33 @@ import base
 import utils
 import os
 import sys
+import info
 
-DEPEND = """
-virtual/base
-dev-util/win32libs
-kdesupport/kdewin32
-kdesupport/qimageblitz
-kdesupport/soprano
-kdesupport/strigi
-"""
-
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.svnTargets['4.0.0'] = 'tags/KDE/4.0.0/kdelibs'
+        self.svnTargets['svnHEAD'] = 'trunk/KDE/kdelibs'
+        self.defaultTarget = 'svnHEAD'
+    
+    def setDependencies( self ):
+        self.hardDependencies['kdesupport/kdewin32'] = 'default'
+        self.hardDependencies['kdesupport/qimageblitz'] = 'default'
+        self.hardDependencies['kdesupport/soprano'] = 'default'
+        self.hardDependencies['kdesupport/strigi'] = 'default'
+        self.hardDependencies['virtual/base'] = 'default'
+        self.hardDependencies['dev-util/win32libs'] = 'default'
+    
 class subclass(base.baseclass):
     def __init__(self):
         self.buildType = "Debug"
         base.baseclass.__init__( self, "" )
         self.instsrcdir = "kdelibs"
+        self.subinfo = subinfo()
 
-    def kdeSvnPath( self ):
-        return "trunk/KDE/kdelibs"
-        
     def unpack( self ):
         return self.kdeSvnUnpack()
 
     def compile( self ):
-        self.kdeCustomDefines = "-DKDE4_BUILD_TESTS=OFF"
         return self.kdeCompile()
 
     def install( self ):

@@ -3,20 +3,27 @@ import utils
 from utils import die
 import os
 import sys
+import info
 
-DEPEND = """
-virtual/base
-libs/qt
-"""
+#DEPEND = """
+#virtual/base
+#libs/qt
+#"""
+
+class subinfo(info.infoclass):
+    def setDependencies( self ):
+        self.hardDependencies['virtual/base'] = 'default'
+        self.hardDependencies['libs/qt'] = 'default'
+
+    def setTargets( self ):
+        self.svnTargets['svnHEAD'] = 'trunk/kdesupport/kdewin-installer'
+        self.defaultTarget = 'svnHEAD'
 
 class subclass(base.baseclass):
     def __init__(self):
         base.baseclass.__init__( self, "" )
         self.instsrcdir = "kdewin-installer"
         self.buildType = "Release"
-
-    def kdeSvnPath( self ):
-        return "trunk/kdesupport/kdewin-installer"
 
     def unpack( self ):
         return self.kdeSvnUnpack()

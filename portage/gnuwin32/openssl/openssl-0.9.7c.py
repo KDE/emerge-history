@@ -1,14 +1,24 @@
 import gnuwin32
 import os
+import info
 
 SRC_URI = """
 http://switch.dl.sf.net/sourceforge/gnuwin32/openssl-0.9.7c-bin.zip
 http://switch.dl.sf.net/sourceforge/gnuwin32/openssl-0.9.7c-lib.zip
 """
 
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.targets['0.9.7c'] = SRC_URI
+        self.defaultTarget = '0.9.7c'
+    
+    def setDependencies( self ):
+        self.hardDependencies['gnuwin32/wget'] = 'default'
+    
 class subclass(gnuwin32.gnuwin32class):
   def __init__(self):
     gnuwin32.gnuwin32class.__init__( self, SRC_URI )
+    self.subinfo = subinfo()
     
   def install( self ):
     print "openssl install called"

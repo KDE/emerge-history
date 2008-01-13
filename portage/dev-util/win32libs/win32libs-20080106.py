@@ -1,6 +1,7 @@
 import base
 import os
 import utils
+import info
 
 SRC_URI= """
 http://82.149.170.66/kde-windows/win32libs/single/aspell-0.60.5-bin.zip
@@ -75,6 +76,14 @@ http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/zip-2.31-bin.zip
 http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/zip-2.31-lib.zip
 """
 
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.targets['HEAD'] = SRC_URI
+        self.defaultTarget = 'HEAD'
+    
+    def setDependencies( self ):
+        self.hardDependencies['gnuwin32/wget'] = 'default'
+    
 class subclass(base.baseclass):
   def __init__(self):
     base.baseclass.__init__( self, SRC_URI )
@@ -82,6 +91,7 @@ class subclass(base.baseclass):
         self.instdestdir = "win32libs"
     else:
         self.instdestdir = ""
+    self.subinfo = subinfo()
 
   def compile(self):
     # here we need an own compile step, because we have to copy

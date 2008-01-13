@@ -1,20 +1,23 @@
 import base
 import os
 import utils
+import info
 
-DEPEND = """
-win32libs-sources/lcms-src
-kde/kdelibs
-kde/kdepimlibs
-"""
-
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.svnTargets['svnHEAD'] = "trunk/koffice"
+        self.defaultTarget = 'svnHEAD'
+    
+    def setDependencies( self ):
+        self.hardDependencies['win32libs-sources/lcms-src'] = 'default'
+        self.hardDependencies['kde/kdelibs'] = 'default'
+        self.hardDependencies['kde/kdebase'] = 'default'
+    
 class subclass(base.baseclass):
     def __init__( self ):
         base.baseclass.__init__( self, "" )
         self.instsrcdir = "koffice"
-
-    def kdeSvnPath( self ):
-        return "trunk/koffice"
+        self.subinfo = subinfo()
 
     def unpack( self ):
         unp = self.kdeSvnUnpack()
@@ -42,7 +45,7 @@ class subclass(base.baseclass):
         return self.kdeInstall()
 
     def make_package( self ):
-        return self.doPackaging( "koffice", "1.95-1", True )
+        return self.doPackaging( "koffice", os.path.basename(sys.argv[0]).replace("koffice-", "").replace(".py", ""), True )
 		
 if __name__ == '__main__':
     subclass().execute()

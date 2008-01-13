@@ -3,10 +3,19 @@ import utils
 from utils import die
 import os
 import sys
+import info
 
-DEPEND = """
-virtual/base
-"""
+#DEPEND = """
+#virtual/base
+#"""
+
+class subinfo(info.infoclass):
+    def setDependencies( self ):
+        self.hardDependencies['virtual/Base'] = 'default'
+
+    def setTargets( self ):
+        self.svnTargets['svnHEAD'] = 'trunk/kdesupport/gmm'
+        self.defaultTarget = 'svnHEAD'
 
 class subclass(base.baseclass):
     def __init__(self):
@@ -14,9 +23,7 @@ class subclass(base.baseclass):
         # header-only package
         self.createCombinedPackage = True
         self.instsrcdir = "gmm"
-
-    def kdeSvnPath( self ):
-        return "trunk/kdesupport/gmm"
+        self.subinfo = subinfo()
 
     def unpack( self ):
         return self.kdeSvnUnpack()

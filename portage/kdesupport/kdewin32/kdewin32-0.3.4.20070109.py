@@ -1,19 +1,27 @@
 import os
 import sys
 import base
+import info
 
-DEPEND = """
-virtual/base
-libs/qt
-"""
+#DEPEND = """
+#virtual/base
+#libs/qt
+#"""
+
+class subinfo(info.infoclass):
+    def setDependencies( self ):
+        self.hardDependencies['virtual/base'] = 'default'
+        self.hardDependencies['libs/qt'] = 'default'
+
+    def setTargets( self ):
+        self.svnTargets['svnHEAD'] = 'trunk/kdesupport/kdewin32'
+        self.defaultTarget = 'svnHEAD'
 
 class subclass(base.baseclass):
     def __init__(self):
         base.baseclass.__init__( self, "" )
         self.instsrcdir = "kdewin32"
-
-    def kdeSvnPath( self ):
-        return "trunk/kdesupport/kdewin32"
+        self.subinfo = subinfo()
 
     def unpack( self ):
         return self.kdeSvnUnpack()

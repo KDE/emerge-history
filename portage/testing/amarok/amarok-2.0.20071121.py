@@ -1,23 +1,26 @@
 import base
 import os
 import sys
+import info
 
-DEPEND = """
-kdesupport/taglib
-kde/kdelibs
-kde/kdebase
-testing/ruby
-testing/phonon
-"""
-
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.svnTargets['svnHEAD'] = 'trunk/extragear/multimedia/amarok'
+        self.defaultTarget = 'svnHEAD'
+    
+    def setDependencies( self ):
+        self.hardDependencies['kdesupport/taglib'] = 'default'
+        self.hardDependencies['testing/ruby'] = 'default'
+        self.hardDependencies['testing/phonon'] = 'default'
+        self.hardDependencies['kde/kdelibs'] = 'default'
+        self.hardDependencies['kde/kdebase'] = 'default'
+    
 class subclass(base.baseclass):
     def __init__( self ):
         base.baseclass.__init__( self, "" )
         self.instsrcdir = "amarok"
+        self.subinfo = subinfo()
 
-    def kdeSvnPath( self ):
-        return "trunk/extragear/multimedia/amarok"
-        
     def unpack( self ):
         return self.kdeSvnUnpack()
 

@@ -3,10 +3,18 @@ import utils
 from utils import die
 import os
 import sys
+import info
 
-DEPEND = """
-virtual/base
-"""
+# http://download.tuxfamily.org/eigen/eigen-1.0.5.tar.gz
+# see http://eigen.tuxfamily.org/ for more informations
+class subinfo(info.infoclass):
+    def setDependencies( self ):
+        self.hardDependencies['virtual/base'] = 'default'
+
+    def setTargets( self ):
+#        self.targets['1.0.5'] = 'http://download.tuxfamily.org/eigen/eigen-1.0.5.tar.gz'
+        self.svnTargets['svnHEAD'] = 'trunk/kdesupport/eigen'
+        self.defaultTarget = 'svnHEAD'
 
 class subclass(base.baseclass):
     def __init__(self):
@@ -14,9 +22,7 @@ class subclass(base.baseclass):
         # header-only package
         self.createCombinedPackage = True
         self.instsrcdir = "eigen"
-
-    def kdeSvnPath( self ):
-        return "trunk/kdesupport/eigen"
+        self.subinfo = subinfo()
 
     def unpack( self ):
         return self.kdeSvnUnpack()
