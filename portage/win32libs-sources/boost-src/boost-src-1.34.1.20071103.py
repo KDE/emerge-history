@@ -3,7 +3,7 @@ import os
 import shutil
 import re
 import utils
-from utils import die
+import info
 
 PACKAGE_NAME         = "boost"
 PACKAGE_VER          = "1_34"
@@ -14,14 +14,19 @@ SRC_URI= """
 http://downloads.sourceforge.net/boost/""" + PACKAGE_FULL_NAME + """.tar.bz2
 """
 
-DEPEND = """
-dev-util/bjam
-"""
-
 # #########################################################################################
 # ATTENTION: currently the only libraries that are built are boost.python libs
 # that implies that the bin package requires the lib package as well to be used for compilation
 # #########################################################################################
+
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.targets['1.34.1'] = 'http://downloads.sourceforge.net/boost/boost_1_34_1.tar.bz2'
+        self.defaultTarget = '1.34.1'
+    
+    def setDependencies( self ):
+        self.hardDependencies['dev-util/win32libs'] = 'default'
+        self.hardDependencies['dev-util/bjam'] = 'default'
 
 class subclass(base.baseclass):
     def __init__(self):
@@ -32,6 +37,7 @@ class subclass(base.baseclass):
             self.toolset = "gcc"
         else:
             self.toolset = "msvc"
+        self.subinfo = subinfo()
 
     def execute( self ):
         base.baseclass.execute( self )
@@ -42,7 +48,7 @@ class subclass(base.baseclass):
         self.toolset, os.path.join( self.workdir, self.imagedir ))
         if utils.verbose() >= 1:
             print cmd
-        os.system( cmd ) and die( "compile failed because of this cobbled stuff: %s" % ( cmd ) )
+        os.system( cmd ) and utils.die( "compile failed because of this cobbled stuff: %s" % ( cmd ) )
         return True
 
     def install( self ):
@@ -51,7 +57,7 @@ class subclass(base.baseclass):
         self.toolset, os.path.join( self.workdir, self.imagedir ))
         if utils.verbose() >= 1:
             print cmd
-        os.system( cmd ) and die( "compile failed because of this cobbled stuff: %s" % ( cmd ) )
+        os.system( cmd ) and utils.die( "compile failed because of this cobbled stuff: %s" % ( cmd ) )
 
         # add another boost include dir boost-1_34
         srcdir  = os.path.join( self.workdir, self.imagedir, "include", "boost" )
@@ -67,7 +73,7 @@ class subclass(base.baseclass):
         cmd = "cd %s && mkdir bin && copy lib\\*.dll bin" % ( os.path.join( self.workdir, self.imagedir ) )
         if utils.verbose() >= 1:
             print cmd
-        os.system( cmd ) and die( "compile failed because of this cobbled stuff: %s" % ( cmd ) )
+        os.system( cmd ) and utils.die( "compile failed because of this cobbled stuff: %s" % ( cmd ) )
         return True
 
     def make_package( self ):
