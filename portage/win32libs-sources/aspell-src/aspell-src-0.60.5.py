@@ -2,7 +2,7 @@ import base
 import os
 import shutil
 import utils
-from utils import die
+import info
 
 PACKAGE_NAME         = "aspell"
 PACKAGE_VER          = "0.60.5"
@@ -14,18 +14,23 @@ libpspell-15
 """
 
 SRC_URI= """
-ftp://ftp.gnu.org/gnu/aspell/""" + PACKAGE_FULL_NAME + """.tar.gz
+ftp://ftp.gnu.org/gnu/aspell/aspell-0.60.5.tar.gz
 """
 
-DEPEND = """
-dev-util/win32libs
-"""
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.targets['0.60.5'] = 'ftp://ftp.gnu.org/gnu/aspell/aspell-0.60.5.tar.gz'
+        self.defaultTarget = '0.60.5'
+    
+    def setDependencies( self ):
+        self.hardDependencies['dev-util/win32libs'] = 'default'
 
 class subclass(base.baseclass):
   def __init__(self):
     base.baseclass.__init__( self, SRC_URI )
     self.instsrcdir = PACKAGE_FULL_NAME
     self.createCombinedPackage = True
+    self.subinfo = subinfo()
 
   def unpack( self ):
     if( not base.baseclass.unpack( self ) ):
@@ -34,7 +39,7 @@ class subclass(base.baseclass):
     src = os.path.join( self.workdir, self.instsrcdir )
     cmd = "cd %s && patch -p0 < %s" % \
           ( src, os.path.join( self.packagedir , "aspell-0.60.5.diff" ) )
-    os.system( cmd ) or die
+    os.system( cmd ) or utils.die( "patching. cmd: %s" % cmd )
     return True
 
   def compile( self ):
