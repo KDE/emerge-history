@@ -2,14 +2,20 @@ import base
 import utils
 import os
 import shutil
-from utils import die
+import info
 
 
 PACKAGE_NAME = "dbus"
 PACKAGE_FULL_VER = "1.1.2.20071228"
-DEPENDS = """
-virtual/base
-"""
+
+
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.svnTargets['1.1.2'] = False
+        self.defaultTarget = '1.1.2'
+    
+    def setDependencies( self ):
+        self.hardDependencies['virtual/base'] = 'default'
 
 class subclass(base.baseclass):
   def __init__(self):
@@ -18,10 +24,8 @@ class subclass(base.baseclass):
         self.instdestdir = "kde"
     # cmake scripts are not in src root...
     self.instsrcdir = os.path.join( "dbus", "cmake" )
+    self.subinfo = subinfo()
     
-  def kdeSvnPath( self ):
-    return False
-
   def unpack( self ):
     print "dbus unpack called"
     # do the svn fetch/update

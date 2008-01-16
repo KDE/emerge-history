@@ -3,7 +3,7 @@ import os
 import shutil
 import re
 import utils
-from utils import die
+import info
 
 PACKAGE_NAME         = "cfitsio"
 PACKAGE_VER          = "3.06"
@@ -14,9 +14,6 @@ SRC_URI= """
 ftp://heasarc.gsfc.nasa.gov/software/fitsio/c/""" + PACKAGE_NAME + PACKAGE_FULL_VER + """.tar.gz
 """
 
-DEPEND = """
-"""
-
 #
 # this library is used by kdeedu/kstars
 # the library is c-only but it may not work due to __stdcall - we'll see
@@ -24,11 +21,17 @@ DEPEND = """
 # to fix this problem if there's one
 #
 
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.targets['3.06'] = 'ftp://heasarc.gsfc.nasa.gov/software/fitsio/c/cfitsio-3060.tar.gz'
+        self.defaultTarget = '3.06'
+
 class subclass(base.baseclass):
     def __init__(self):
         base.baseclass.__init__( self, SRC_URI )
         self.instsrcdir = PACKAGE_NAME
         self.createCombinedPackage = True
+        self.subinfo = subinfo()
 
     def execute( self ):
         base.baseclass.execute( self )
@@ -46,13 +49,13 @@ class subclass(base.baseclass):
               ( os.path.join( self.workdir, self.instsrcdir ), os.path.join( self.packagedir , "configure.diff" ) )
         if utils.verbose() >= 1:
             print cmd
-        os.system( cmd ) or die
+        os.system( cmd ) or utils.die( "patchin'. cmd: %s" % cmd )
 
         cmd = "cd %s && patch -p0 < %s" % \
               ( os.path.join( self.workdir, self.instsrcdir ), os.path.join( self.packagedir , "Makefile.in.diff" ) )
         if utils.verbose() >= 1:
             print cmd
-        os.system( cmd ) or die
+        os.system( cmd ) or utils.die( "patchin'. cmd: %s" % cmd )
         
         return True
 

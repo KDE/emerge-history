@@ -2,7 +2,7 @@ import base
 import os
 import shutil
 import utils
-from utils import die
+import info
 
 PACKAGE_NAME         = "libbzip2"
 PACKAGE_VER          = "1.0.4"
@@ -14,16 +14,20 @@ SRC_URI= """
 http://www.bzip.org/1.0.4/bzip2-1.0.4.tar.gz
 """
 
-DEPEND = """
-"""
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.targets['1.0.4-6'] = 'http://www.bzip.org/1.0.4/bzip2-1.0.4.tar.gz'
+        self.defaultTarget = '1.0.4-6'
 
 class subclass(base.baseclass):
   def __init__(self):
     base.baseclass.__init__( self, SRC_URI )
     self.instsrcdir = "bzip2-1.0.4"
-    self.instdestdir = "kde"
+    if self.traditional:
+        self.instdestdir = "kde"
     self.createCombinedPackage = True
     self.buildType = "Release"
+    self.subinfo = subinfo()
 
   def unpack( self ):
     if( not base.baseclass.unpack( self ) ):
@@ -37,7 +41,7 @@ class subclass(base.baseclass):
 
     cmd = "cd %s && patch -p0 < %s" % \
           ( bzip2_dir, os.path.join( self.packagedir, "bzip.diff" ) )
-    os.system( cmd ) or die("patch")
+    os.system( cmd ) or utils.die("patch")
 
     return True
 
