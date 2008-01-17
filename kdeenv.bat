@@ -14,7 +14,7 @@ rem    this file sources the kdesettings.bat file automatically
 call ..\etc\kdesettings.bat
 
 set PATH=%KDEROOT%\emerge\bin;%PATH%
-
+SET KDEWIN_DIR=%KDEROOT%
 if %KDECOMPILER% == mingw ( call :path-mingw )
 
 if %directory_layout% == installer ( 
