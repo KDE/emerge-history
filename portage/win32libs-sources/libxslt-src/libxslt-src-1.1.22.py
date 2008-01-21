@@ -2,6 +2,7 @@ import base
 import os
 import shutil
 import utils
+import info
 
 PACKAGE_NAME         = "libxslt"
 PACKAGE_VER          = "1.1.22"
@@ -15,9 +16,11 @@ PACKAGE_INSTSRCDIR   = PACKAGE_FULL_NAME + ".win32"
 
 SRC_URI= """ftp://ftp.zlatkovic.com/pub/libxml/""" + PACKAGE_FULL_NAME + """.win32.zip"""
 
-DEPEND = """
-"""
-
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.svnTargets['1.1.22'] = SRC_URI
+        self.defaultTarget = '1.1.22-2'
+    
 class subclass(base.baseclass):
   def __init__(self):
     base.baseclass.__init__( self, SRC_URI )
