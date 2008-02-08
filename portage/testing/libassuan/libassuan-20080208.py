@@ -1,23 +1,21 @@
 import base
 import utils
 import os
-import shutil
-from utils import die
 
 
-PACKAGE_NAME = "libassuan"
-PACKAGE_FULL_VER = "20071214"
-DEPENDS = """
-virtual/base
-kde/kdelibs
-"""
-
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.svnTargets['svnHEAD'] = False
+        self.defaultTarget = '0.6.3'
+    
+    def setDependencies( self ):
+        self.hardDependencies['kde/kdelibs'] = 'default'
+        self.hardDependencies['virtual/base'] = 'default'
+    
 class subclass(base.baseclass):
     def __init__(self):
         base.baseclass.__init__( self, "" )
-#    self.instdestdir = "kde"
-    # cmake scripts are not in src root...
-        self.instsrcdir = "libassuan"
+        self.subinfo = subinfo()
 
     def unpack( self ):
         if utils.verbose() >= 1
