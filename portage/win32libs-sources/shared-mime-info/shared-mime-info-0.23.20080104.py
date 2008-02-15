@@ -3,7 +3,6 @@ import os
 import shutil
 import utils
 import re
-from utils import die
 
 PACKAGE_NAME         = "shared-mime-info"
 PACKAGE_VER          = "0.23"
@@ -21,12 +20,17 @@ DEPEND = """
 dev-util/win32libs
 """
 
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.targets[PACKAGE_VER] = SRC_URI
+        self.defaultTarget = PACKAGE_VER
+
 class subclass(base.baseclass):
   def __init__(self):
-    base.baseclass.__init__( self, SRC_URI )
+    base.baseclass.__init__( self, "" )
     self.instsrcdir = PACKAGE_FULL_NAME
     self.createCombinedPackage = True
-    self.buildType = "Release"
+    self.buildType = "Release"    
 
   def unpack( self ):
     if(not base.baseclass.unpack( self ) ):
@@ -77,7 +81,9 @@ class subclass(base.baseclass):
     options = options + "-DCMAKE_LIBRARY_PATH=%s " % \
               os.path.join( self.rootdir, "win32libs", "lib" ).replace( "\\", "/" )
 
-    options = options + "-DCMAKE_BUILD_TYPE=Release "
+    self.kdeCustomDefines = "-DCMAKE_BUILD_TYPE=Release -DGLIB_DIR=%s" % \
+              os.path.join( self.workdir, "glib-2.14.1" ).replace( "\\", "/" )
+    
 
     return options
 
@@ -89,13 +95,13 @@ class subclass(base.baseclass):
         return False
     cmd = os.path.join( self.imagedir, self.instdestdir, "bin", "update-mime-database.exe" ) \
         + " " + os.path.join( self.imagedir, "share", "mime" )
-    os.system( cmd ) and die( cmd )
+    self.system( cmd )
     return True
 
   def make_package( self ):
     cmd = "strip -s %s" % \
           os.path.join(self.imagedir, self.instdestdir, "bin", "update-mime-database.exe" )
-    os.system( cmd ) and die ( cmd )
+    self.system( cmd )
 
     # now do packaging with kdewin-packager
     self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER, True )
