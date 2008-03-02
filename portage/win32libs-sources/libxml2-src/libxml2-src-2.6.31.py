@@ -2,23 +2,28 @@ import base
 import os
 import shutil
 import utils
+import info
 
 PACKAGE_NAME         = "libxml2"
-PACKAGE_VER          = "2.6.30"
-PACKAGE_FULL_VER     = "2.6.30-3"
-PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER)
+PACKAGE_VER          = "2.6.31"
+PACKAGE_FULL_VER     = "2.6.31-1"
+PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER )
 PACKAGE_DLL_NAME     = "libxml2"
 PACKAGE_INSTSRCDIR   = PACKAGE_FULL_NAME + ".win32"
 
-SRC_URI= """ftp://ftp.zlatkovic.com/pub/libxml/""" + PACKAGE_FULL_NAME + """.win32.zip"""
-
-DEPEND = """
-"""
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.targets['2.6.31-1'] = "ftp://ftp.zlatkovic.com/pub/libxml/" + PACKAGE_FULL_NAME + ".win32.zip"
+        self.targetInstSrc['2.6.31-1'] = PACKAGE_FULL_NAME
+        self.defaultTarget = '2.6.31-1'
+    def setDependencies( self ):
+        return
 
 class subclass(base.baseclass):
   def __init__(self):
-    base.baseclass.__init__( self, SRC_URI )
+    base.baseclass.__init__( self, "" )
     self.createCombinedPackage = True
+    self.subinfo = subinfo()
 
   def compile( self ):
     # binary-only package - nothing to compile
