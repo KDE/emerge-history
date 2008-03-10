@@ -2,6 +2,7 @@ import base
 import os
 import shutil
 import utils
+import info
 
 PACKAGE_NAME         = "tiff"
 PACKAGE_VER          = "3.8.2"
@@ -17,14 +18,16 @@ http://heanet.dl.sourceforge.net/sourceforge/gnuwin32/tiff-3.8.2-1-lib.zip
 DEPEND = """
 """
 
-class subclass(base.baseclass):
-  def __init__(self):
-    base.baseclass.__init__( self, SRC_URI )
+class subinfo( info.infoclass ):
+    def setTargets( self ):
+        self.targets['3.8.2'] = SRC_URI
+        self.defaultTarget = '3.8.2'
+        
+class subclass( base.baseclass ):
+  def __init__( self ):
+    base.baseclass.__init__( self, "" )
     self.createCombinedPackage = True
-
-  def compile( self ):
-    # binary-only package - nothing to compile
-    return True
+    self.subinfo = subinfo()
 
   def install( self ):
     # cleanup
