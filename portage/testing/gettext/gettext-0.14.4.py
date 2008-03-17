@@ -1,9 +1,9 @@
 import base
 
 SRC_URI= """
-http://downloads.sourceforge.net/gnuwin32/gettext-0.14.4-bin.zip
-http://downloads.sourceforge.net/gnuwin32/gettext-0.14.4-lib.zip
-http://downloads.sourceforge.net/gnuwin32/libgw32c-0.4-lib.zip
+http://switch.dl.sf.net/gnuwin32/gettext-0.14.4-bin.zip
+http://switch.dl.sf.net/gnuwin32/gettext-0.14.4-lib.zip
+http://switch.dl.sf.net/gnuwin32/libgw32c-0.4-lib.zip
 """
 
 DEPEND = """
