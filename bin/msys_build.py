@@ -17,6 +17,20 @@ class msys_interface:
             path = '/' + path[0].lower() + '/' + path[3:]
         return path
 
+    def msysExecute( self, path, cmd, args ):
+        sh = os.path.join( self.msysdir, "bin", "sh.exe" )
+
+        cmd = "%s --login -c \"cd %s && %s %s" % \
+              ( sh, self.__toMSysPath( path ), self.__toMSysPath( cmd ), args )
+
+        if utils.verbose() > 1:
+            cmd += " VERBOSE=1"
+        cmd +="\""
+        if utils.verbose() > 0:
+            print "msys compile: %s" % cmd
+        utils.system( cmd ) or utils.die( "msys execute failed. cmd: %s" % cmd )
+        return True
+
     def msysConfigureFlags ( self ):
         """adding configure flags always used"""
         flags  = "--disable-nls "
