@@ -1,37 +1,29 @@
 import base
 import os
 import shutil
-import utils
+import info
 
-PACKAGE_NAME         = "libpng"
-PACKAGE_VER          = "1.2.23"
-PACKAGE_FULL_VER     = "1.2.23"
-PACKAGE_FULL_NAME    = "%s-%s" % ( PACKAGE_NAME, PACKAGE_VER)
-PACKAGE_DLL_NAME     = "libpng12"
-
-SRC_URI= """
-http://ovh.dl.sourceforge.net/sourceforge/libpng/""" + PACKAGE_FULL_NAME + """.tar.gz
-"""
-
-DEPEND = """
-dev-util/win32libs
-"""
+class subinfo(info.infoclass):
+    def setTargets( self ):
+        self.targets['1.2.26'] = 'http://ovh.dl.sourceforge.net/sourceforge/libpng/libpng-1.2.26.tar.gz'
+        self.targetInstSrc['1.2.26'] = 'libpng-1.2.26'
+        self.defaultTarget = '1.2.26'
+    
+    def setDependencies( self ):
+        self.hardDependencies['virtual/base'] = 'dev-util/win32libs'
 
 class subclass(base.baseclass):
   def __init__(self):
-    base.baseclass.__init__( self, SRC_URI )
-    self.instsrcdir = PACKAGE_FULL_NAME
+    base.baseclass.__init__( self, "" )
     self.createCombinedPackage = True
     self.buildType = "Release"
-
-  def execute( self ):
-    base.baseclass.execute( self )
+    self.subinfo = subinfo()
     if self.compiler <> "mingw":
       print "error: can only be build with MinGW (but in the end a mingw/msvc combined package is created"
       exit( 1 )
 
   def unpack( self ):
-    if( not base.baseclass.unpack( self ) ):
+    if( not self.kdeSvnUnpack() ):
       return False
     # the cmake script is in libpng-src/scripts
     srcdir  = os.path.join( self.workdir, self.instsrcdir, "scripts", "CMakeLists.txt" )
@@ -48,16 +40,14 @@ class subclass(base.baseclass):
     return self.kdeInstall()
 
   def make_package( self ):
-    self.instdestdir = "kde"
+    # auto-create both import libs with the help of pexports
+    self.stripLibs( "libpng12" )
 
     # auto-create both import libs with the help of pexports
-    self.stripLibs( PACKAGE_DLL_NAME )
-
-    # auto-create both import libs with the help of pexports
-    self.createImportLibs( PACKAGE_DLL_NAME )
+    self.createImportLibs( "libpng12" )
 
     # now do packaging with kdewin-packager
-    self.doPackaging( PACKAGE_NAME, PACKAGE_FULL_VER )
+    self.doPackaging( "libpng", self.buildTarget )
 
     return True
 
