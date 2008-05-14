@@ -20,8 +20,8 @@ dev-util/win32libs
 """
 
 class subclass(base.baseclass):
-  def __init__(self):
-    base.baseclass.__init__( self, SRC_URI )
+  def __init__( self, **args ):
+    base.baseclass.__init__( self, SRC_URI, args=args )
     self.instsrcdir = os.path.join( PACKAGE_FULL_NAME, "src", "libjasper" )
     self.createCombinedPackage = True
     self.buildType = "Release"

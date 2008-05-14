@@ -17,8 +17,8 @@ DEPEND = """
 """
 
 class subclass(base.baseclass):
-  def __init__(self):
-    base.baseclass.__init__( self, SRC_URI )
+  def __init__( self, **args ):
+    base.baseclass.__init__( self, SRC_URI, args=args )
 
   def compile( self ):
     # binary-only package - nothing to compile
