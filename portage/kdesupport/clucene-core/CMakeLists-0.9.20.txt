@@ -85,22 +85,22 @@ set(clucene_SRCS
    ${CLucene_src_dir}/analysis/standard/StandardAnalyzer.cpp
    ${CLucene_src_dir}/analysis/standard/StandardFilter.cpp
    ${CLucene_src_dir}/analysis/standard/StandardTokenizer.cpp
-   
+
    ${CLucene_src_dir}/analysis/AnalysisHeader.cpp
    ${CLucene_src_dir}/analysis/Analyzers.cpp
-   
+
    ${CLucene_src_dir}/config/gunichartables.cpp
    ${CLucene_src_dir}/config/repl_lltot.cpp
    ${CLucene_src_dir}/config/repl_tcslwr.cpp
    ${CLucene_src_dir}/config/repl_tcscasecmp.cpp
    ${CLucene_src_dir}/config/threads.cpp
    ${CLucene_src_dir}/config/utf8.cpp
-   
+
    ${CLucene_src_dir}/debug/condition.cpp
    ${CLucene_src_dir}/debug/error.cpp
-   ${CLucene_src_dir}/debug/mempool.cpp
+#   ${CLucene_src_dir}/debug/mempool.cpp
    ${CLucene_src_dir}/debug/memtracking.cpp
-   
+
    ${CLucene_src_dir}/document/DateField.cpp
    ${CLucene_src_dir}/document/Document.cpp
    ${CLucene_src_dir}/document/Field.cpp
@@ -190,6 +190,7 @@ set(clucene_SRCS
    ${CLucene_src_dir}/util/Reader.cpp
    ${CLucene_src_dir}/util/StringBuffer.cpp
    ${CLucene_src_dir}/util/StringIntern.cpp
+   ${CLucene_src_dir}/util/ThreadLocal.cpp
    ${CLucene_src_dir}/StdHeader.cpp
 )
 
@@ -198,7 +199,7 @@ set(clucene_HDRS
    ${CLucene_src_dir}/analysis/standard/StandardFilter.h
    ${CLucene_src_dir}/analysis/standard/StandardTokenizer.h
    ${CLucene_src_dir}/analysis/standard/StandardTokenizerConstants.h
-   
+
    ${CLucene_src_dir}/analysis/AnalysisHeader.h
    ${CLucene_src_dir}/analysis/Analyzers.h
 
@@ -322,6 +323,7 @@ set(clucene_HDRS
    ${CLucene_src_dir}/util/stringreader.h
    ${CLucene_src_dir}/util/StringBuffer.h
    ${CLucene_src_dir}/util/StringIntern.h
+   ${CLucene_src_dir}/util/ThreadLocal.h
    ${CLucene_src_dir}/util/VoidList.h
    ${CLucene_src_dir}/util/VoidMap.h
 )
