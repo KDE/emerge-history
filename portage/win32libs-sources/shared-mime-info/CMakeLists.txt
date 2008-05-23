@@ -11,6 +11,11 @@
 # extract all into on directory and adjust the following paths:
 
 project(update-mime-database)
+cmake_minimum_required(VERSION 2.4.5)
+
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
 
 include(CheckIncludeFiles)
 include(CheckSymbolExists)
