@@ -485,7 +485,7 @@ configure.
 
 /* Version number of package */
 #ifndef _CL_VERSION 
-#define _CL_VERSION  "0.9.16a"
+#define _CL_VERSION  "@CLUCENE_VERSION@"
 #endif
 
 /* Forces into Ascii mode */
