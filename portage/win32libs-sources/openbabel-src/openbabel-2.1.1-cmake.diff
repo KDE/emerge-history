@@ -1,6 +1,6 @@
 diff -N -r -u openbabel-2.1.1-orig/CMakeLists.txt openbabel-2.1.1/CMakeLists.txt
---- openbabel-2.1.1-orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ openbabel-2.1.1/CMakeLists.txt	2007-11-19 20:51:49.461250000 +0100
+--- CMakeLists.txt.orig	1970-01-01 01:00:00.000000000 +0100
++++ CMakeLists.txt	2007-11-19 20:51:49.461250000 +0100
 @@ -0,0 +1,88 @@
 +project(openabel)
 +set(BABEL_MAJ_VER   2)
@@ -91,8 +91,8 @@ diff -N -r -u openbabel-2.1.1-orig/CMakeLists.txt openbabel-2.1.1/CMakeLists.txt
 +add_subdirectory(tools)
 +
 diff -N -r -u openbabel-2.1.1-orig/data/CMakeLists.txt openbabel-2.1.1/data/CMakeLists.txt
---- openbabel-2.1.1-orig/data/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ openbabel-2.1.1/data/CMakeLists.txt	2007-11-19 19:25:53.523750000 +0100
+--- data/CMakeLists.txt.orig	1970-01-01 01:00:00.000000000 +0100
++++ data/CMakeLists.txt	2007-11-19 19:25:53.523750000 +0100
 @@ -0,0 +1,11 @@
 +
 +set(to_install
@@ -106,14 +106,14 @@ diff -N -r -u openbabel-2.1.1-orig/data/CMakeLists.txt openbabel-2.1.1/data/CMak
 +
 +install(FILES ${to_install} DESTINATION share/openbabel/${BABEL_VERSION})
 diff -N -r -u openbabel-2.1.1-orig/doc/CMakeLists.txt openbabel-2.1.1/doc/CMakeLists.txt
---- openbabel-2.1.1-orig/doc/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ openbabel-2.1.1/doc/CMakeLists.txt	2007-11-19 19:25:53.523750000 +0100
+--- doc/CMakeLists.txt.orig	1970-01-01 01:00:00.000000000 +0100
++++ doc/CMakeLists.txt	2007-11-19 19:25:53.523750000 +0100
 @@ -0,0 +1,2 @@
 +file(GLOB man_1 *.1)
 +install(FILES ${man_1} DESTINATION share/man/man1)
 diff -N -r -u openbabel-2.1.1-orig/include/CMakeLists.txt openbabel-2.1.1/include/CMakeLists.txt
---- openbabel-2.1.1-orig/include/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ openbabel-2.1.1/include/CMakeLists.txt	2007-11-19 19:25:53.539375000 +0100
+--- include/CMakeLists.txt.orig	1970-01-01 01:00:00.000000000 +0100
++++ include/CMakeLists.txt	2007-11-19 19:25:53.539375000 +0100
 @@ -0,0 +1,8 @@
 +
 +file(GLOB openbabel_headers openbabel/*.h)
@@ -124,8 +124,8 @@ diff -N -r -u openbabel-2.1.1-orig/include/CMakeLists.txt openbabel-2.1.1/includ
 +install(FILES ${openbabel_headers} DESTINATION include/openbabel-2.0/openbabel)
 +install(FILES ${math_headers}      DESTINATION include/openbabel-2.0/openbabel/math)
 diff -N -r -u openbabel-2.1.1-orig/include/openbabel/obmolecformat.h openbabel-2.1.1/include/openbabel/obmolecformat.h
---- openbabel-2.1.1-orig/include/openbabel/obmolecformat.h	2007-02-26 17:46:15.000000000 +0100
-+++ openbabel-2.1.1/include/openbabel/obmolecformat.h	2007-11-19 19:25:53.617500000 +0100
+--- include/openbabel/obmolecformat.h.orig	2007-02-26 17:46:15.000000000 +0100
++++ include/openbabel/obmolecformat.h	2007-11-19 19:25:53.617500000 +0100
 @@ -110,7 +110,7 @@
    static OBMol* MakeCombinedMolecule(OBMol* pFirst, OBMol* pSecond);
    //@}
@@ -136,8 +136,8 @@ diff -N -r -u openbabel-2.1.1-orig/include/openbabel/obmolecformat.h openbabel-2
  #else
    typedef std::map<std::string, unsigned> NameIndexType;
 diff -N -r -u openbabel-2.1.1-orig/openbabel-2.0.pc.cmake openbabel-2.1.1/openbabel-2.0.pc.cmake
---- openbabel-2.1.1-orig/openbabel-2.0.pc.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ openbabel-2.1.1/openbabel-2.0.pc.cmake	2007-11-19 19:25:53.633125000 +0100
+--- openbabel-2.0.pc.cmake.orig	1970-01-01 01:00:00.000000000 +0100
++++ openbabel-2.0.pc.cmake	2007-11-19 19:25:53.633125000 +0100
 @@ -0,0 +1,11 @@
 +prefix=@CMAKE_INSTALL_PREFIX@
 +exec_prefix=${prefix}
@@ -151,8 +151,8 @@ diff -N -r -u openbabel-2.1.1-orig/openbabel-2.0.pc.cmake openbabel-2.1.1/openba
 +Libs: -L${libdir} -lopenbabel
 +Cflags: -I${pkgincludedir}
 diff -N -r -u openbabel-2.1.1-orig/src/CMakeLists.txt openbabel-2.1.1/src/CMakeLists.txt
---- openbabel-2.1.1-orig/src/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ openbabel-2.1.1/src/CMakeLists.txt	2007-11-19 23:37:11.773750000 +0100
+--- src/CMakeLists.txt.orig	1970-01-01 01:00:00.000000000 +0100
++++ src/CMakeLists.txt	2007-11-19 23:37:11.773750000 +0100
 @@ -0,0 +1,87 @@
 +
 +
@@ -242,8 +242,8 @@ diff -N -r -u openbabel-2.1.1-orig/src/CMakeLists.txt openbabel-2.1.1/src/CMakeL
 +
 +add_subdirectory(formats)
 diff -N -r -u openbabel-2.1.1-orig/src/config.h.cmake openbabel-2.1.1/src/config.h.cmake
---- openbabel-2.1.1-orig/src/config.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ openbabel-2.1.1/src/config.h.cmake	2007-11-19 19:25:53.711250000 +0100
+--- src/config.h.cmake.orig	1970-01-01 01:00:00.000000000 +0100
++++ src/config.h.cmake	2007-11-19 19:25:53.711250000 +0100
 @@ -0,0 +1,160 @@
 +/* src/config.h.in.  Generated from configure.in by autoheader.  */
 +
@@ -406,8 +406,8 @@ diff -N -r -u openbabel-2.1.1-orig/src/config.h.cmake openbabel-2.1.1/src/config
 +
 +#define OB_MODULE_PATH "@OB_MODULE_PATH@"
 diff -N -r -u openbabel-2.1.1-orig/src/fingerprints/finger3.cpp openbabel-2.1.1/src/fingerprints/finger3.cpp
---- openbabel-2.1.1-orig/src/fingerprints/finger3.cpp	2007-07-05 06:26:17.000000000 +0200
-+++ openbabel-2.1.1/src/fingerprints/finger3.cpp	2007-11-19 19:25:53.711250000 +0100
+--- src/fingerprints/finger3.cpp.orig	2007-07-05 06:26:17.000000000 +0200
++++ src/fingerprints/finger3.cpp	2007-11-19 19:25:53.711250000 +0100
 @@ -18,6 +18,11 @@
  #include <openbabel/babelconfig.h>
  #include <openbabel/mol.h>
@@ -421,8 +421,8 @@ diff -N -r -u openbabel-2.1.1-orig/src/fingerprints/finger3.cpp openbabel-2.1.1/
  #include <map>
  #include <string>
 diff -N -r -u openbabel-2.1.1-orig/src/formats/CMakeLists.txt openbabel-2.1.1/src/formats/CMakeLists.txt
---- openbabel-2.1.1-orig/src/formats/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ openbabel-2.1.1/src/formats/CMakeLists.txt	2007-11-19 21:23:29.898750000 +0100
+--- src/formats/CMakeLists.txt.orig	1970-01-01 01:00:00.000000000 +0100
++++ src/formats/CMakeLists.txt	2007-11-19 21:23:29.898750000 +0100
 @@ -0,0 +1,154 @@
 +if(WITH_INCHI)
 +  add_definitions(-DINCHI_LINK_AS_DLL)
@@ -579,8 +579,8 @@ diff -N -r -u openbabel-2.1.1-orig/src/formats/CMakeLists.txt openbabel-2.1.1/sr
 +  set_target_properties(${format} PROPERTIES OUTPUT_NAME ${format} PREFIX "")
 +endforeach(format)
 diff -N -r -u openbabel-2.1.1-orig/src/formats/inchi/CMakeLists.txt openbabel-2.1.1/src/formats/inchi/CMakeLists.txt
---- openbabel-2.1.1-orig/src/formats/inchi/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ openbabel-2.1.1/src/formats/inchi/CMakeLists.txt	2007-11-19 19:25:53.805000000 +0100
+--- src/formats/inchi/CMakeLists.txt.orig	1970-01-01 01:00:00.000000000 +0100
++++ src/formats/inchi/CMakeLists.txt	2007-11-19 19:25:53.805000000 +0100
 @@ -0,0 +1,25 @@
 +project(inchi)
 +set(INCHI_MAJ_VER   0)
@@ -608,8 +608,8 @@ diff -N -r -u openbabel-2.1.1-orig/src/formats/inchi/CMakeLists.txt openbabel-2.
 +                ARCHIVE DESTINATION lib
 +)
 diff -N -r -u openbabel-2.1.1-orig/src/formats/inchiformat.cpp openbabel-2.1.1/src/formats/inchiformat.cpp
---- openbabel-2.1.1-orig/src/formats/inchiformat.cpp	2007-07-07 08:35:53.000000000 +0200
-+++ openbabel-2.1.1/src/formats/inchiformat.cpp	2007-11-19 19:25:53.898750000 +0100
+--- src/formats/inchiformat.cpp.orig	2007-07-07 08:35:53.000000000 +0200
++++ src/formats/inchiformat.cpp	2007-11-19 19:25:53.898750000 +0100
 @@ -21,7 +21,11 @@
  #include <openbabel/obmolecformat.h>
  
@@ -623,8 +623,8 @@ diff -N -r -u openbabel-2.1.1-orig/src/formats/inchiformat.cpp openbabel-2.1.1/s
  #include <vector>
  #include "openbabel/chiral.h"
 diff -N -r -u openbabel-2.1.1-orig/src/formats/xml/cmlformat.cpp openbabel-2.1.1/src/formats/xml/cmlformat.cpp
---- openbabel-2.1.1-orig/src/formats/xml/cmlformat.cpp	2007-04-14 02:34:13.000000000 +0200
-+++ openbabel-2.1.1/src/formats/xml/cmlformat.cpp	2007-11-19 19:25:53.930000000 +0100
+--- src/formats/xml/cmlformat.cpp.orig	2007-04-14 02:34:13.000000000 +0200
++++ src/formats/xml/cmlformat.cpp	2007-11-19 19:25:53.930000000 +0100
 @@ -23,6 +23,11 @@
  #ifdef WIN32
  #pragma warning (disable : 4800)
@@ -638,8 +638,8 @@ diff -N -r -u openbabel-2.1.1-orig/src/formats/xml/cmlformat.cpp openbabel-2.1.1
  using namespace std;
  namespace OpenBabel
 diff -N -r -u openbabel-2.1.1-orig/src/obconversion.cpp openbabel-2.1.1/src/obconversion.cpp
---- openbabel-2.1.1-orig/src/obconversion.cpp	2007-07-01 21:16:17.000000000 +0200
-+++ openbabel-2.1.1/src/obconversion.cpp	2007-11-19 19:25:54.133125000 +0100
+--- src/obconversion.cpp.orig	2007-07-01 21:16:17.000000000 +0200
++++ src/obconversion.cpp	2007-11-19 19:25:54.133125000 +0100
 @@ -423,6 +423,8 @@
    //////////////////////////////////////////////////////
    bool OBConversion::SetOutFormat(OBFormat* pOut)
@@ -650,8 +650,8 @@ diff -N -r -u openbabel-2.1.1-orig/src/obconversion.cpp openbabel-2.1.1/src/obco
      return !(pOutFormat->Flags() & NOTWRITABLE);
    }
 diff -N -r -u openbabel-2.1.1-orig/test/CMakeLists.txt openbabel-2.1.1/test/CMakeLists.txt
---- openbabel-2.1.1-orig/test/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ openbabel-2.1.1/test/CMakeLists.txt	2007-11-19 19:25:54.133125000 +0100
+--- test/CMakeLists.txt.orig	1970-01-01 01:00:00.000000000 +0100
++++ test/CMakeLists.txt	2007-11-19 19:25:54.133125000 +0100
 @@ -0,0 +1,8 @@
 +
 +add_executable(roundtrip roundtrip.cpp)
@@ -662,8 +662,8 @@ diff -N -r -u openbabel-2.1.1-orig/test/CMakeLists.txt openbabel-2.1.1/test/CMak
 +                ARCHIVE DESTINATION lib
 +)
 diff -N -r -u openbabel-2.1.1-orig/tools/CMakeLists.txt openbabel-2.1.1/tools/CMakeLists.txt
---- openbabel-2.1.1-orig/tools/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ openbabel-2.1.1/tools/CMakeLists.txt	2007-11-19 19:25:54.133125000 +0100
+--- tools/CMakeLists.txt.orig	1970-01-01 01:00:00.000000000 +0100
++++ tools/CMakeLists.txt	2007-11-19 19:25:54.133125000 +0100
 @@ -0,0 +1,21 @@
 +set(tools
 +      babel
@@ -687,8 +687,8 @@ diff -N -r -u openbabel-2.1.1-orig/tools/CMakeLists.txt openbabel-2.1.1/tools/CM
 +  )
 +endforeach(tool)
 diff -N -r -u openbabel-2.1.1-orig/tools/obgrep.cpp openbabel-2.1.1/tools/obgrep.cpp
---- openbabel-2.1.1-orig/tools/obgrep.cpp	2007-01-05 17:29:56.000000000 +0100
-+++ openbabel-2.1.1/tools/obgrep.cpp	2007-11-19 21:53:01.398750000 +0100
+--- tools/obgrep.cpp.orig	2007-01-05 17:29:56.000000000 +0100
++++ tools/obgrep.cpp	2007-11-19 21:53:01.398750000 +0100
 @@ -28,7 +28,7 @@
  #include <openbabel/obconversion.h>
  #include <openbabel/parsmart.h>
