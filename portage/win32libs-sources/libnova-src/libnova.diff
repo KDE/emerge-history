@@ -1,3 +1,23 @@
+--- libnova-0.12.3/configure.orig	Fri Jan 16 21:38:31 2009
++++ libnova-0.12.3/configure	Fri Jan 16 21:34:44 2009
+@@ -7315,7 +7315,7 @@
+       # built for inclusion in a dll (and should export symbols for example).
+       # Although the cygwin gcc ignores -fPIC, still need this for old-style
+       # (--disable-auto-import) libraries
+-      lt_prog_compiler_pic='-DDLL_EXPORT'
++      lt_prog_compiler_pic='-DLIBNOVA_SHARED'
+       ;;
+ 
+     darwin* | rhapsody*)
+@@ -7381,7 +7381,7 @@
+     mingw* | cygwin* | pw32* | os2*)
+       # This hack is so that the source file can tell whether it is being
+       # built for inclusion in a dll (and should export symbols for example).
+-      lt_prog_compiler_pic='-DDLL_EXPORT'
++      lt_prog_compiler_pic='-DLIBNOVA_SHARED'
+       ;;
+ 
+     hpux9* | hpux10* | hpux11*)
 diff -N -r -u libnova-0.12.1/Makefile.in libnova-0.12.1w/Makefile.in
 --- libnova-0.12.1/Makefile.in	2007-11-27 12:47:16.656250000 +0100
 +++ libnova-0.12.1w/Makefile.in	2007-11-27 12:29:00.859375000 +0100
