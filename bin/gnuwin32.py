@@ -9,9 +9,6 @@ class gnuwin32class(base.baseclass):
   def install( self ):
     if utils.verbose() > 1:
         print "gnuwin32 install called"
-    if self.traditional:
-        destdir = os.path.join( self.imagedir, "gnuwin32" )
-    else:
-        destdir = self.imagedir
+    destdir = self.imagedir
     utils.copySrcDirToDestDir( self.workdir, destdir )
     return True
