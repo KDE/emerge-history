@@ -8,7 +8,6 @@ set(bzip2_lib_SRCS
     compress.c
     decompress.c
     bzlib.c
-    libbz2.def
 )
 
 set(bzip2_scripts
