@@ -19,7 +19,14 @@ def __import__( module ):
         sys.path.append( os.path.dirname( module ) )
         fileHdl = open( module )
         modulename = os.path.basename( module ).replace('.py', '')
-        return imp.load_module( modulename.replace('.', '_'), fileHdl, module, imp.get_suffixes()[1] )
+
+        # TODO: Impove importing ...
+        suff_indices, suff_idx = imp.get_suffixes(), 1
+        for idx, suff in enumerate(suff_indices):
+            if suff[0].startswith(".py"): suff_idx = idx; break
+
+        return imp.load_module( modulename.replace('.', '_'), 
+            fileHdl, module, suff_indices[suff_idx] )
 
 def rootDir():
     portageroot = os.getenv("EMERGE_PORTAGE_ROOT")
@@ -469,4 +476,43 @@ def remInstalled( category, package, version, buildType='' ):
         os.remove( dbfile )
         os.rename( tmpdbfile, dbfile )
     return found
+
+def get_packages_categories(packageName):
+    packageList, categoryList = [], []
+
+    if len( packageName.split( "/" ) ) == 1:
+        if PortageInstance.isCategory( packageName ):
+            utils.debug( "isCategory=True", 2 )
+            packageList = PortageInstance.getAllPackages( packageName )
+            categoryList = [ packageName ] * len(packageList)
+        else:
+        
+            if PortageInstance.isCategory( defaultCategory ) and PortageInstance.isPackage( defaultCategory, packageName ):
+                # prefer the default category
+                packageList = [ packageName ]
+                categoryList = [ defaultCategory ]
+            else:
+                if PortageInstance.getCategory( packageName ):
+                    packageList = [ packageName ]
+                    categoryList = [ PortageInstance.getCategory( packageName ) ]
+                else:
+                    utils.warning( "unknown category or package: %s" % packageName )
+    elif len( packageName.split( "/" ) ) == 2:
+        [ cat, pac ] = packageName.split( "/" )
+        validPackage = False
+        if PortageInstance.isCategory( cat ):
+            categoryList = [ cat ]
+        else:
+            utils.warning( "unknown category %s; ignoring package %s" % ( cat, packageName ) )
+        if len( categoryList ) > 0 and PortageInstance.isPackage( categoryList[0], pac ):
+            packageList = [ pac ]
+        if len( categoryList ) and len( packageList ):
+            utils.debug( "added package %s/%s" % ( categoryList[0], pac ), 2 )
+        else:
+            utils.debug( "ignoring package %s" % packageName )
+    else:
+        utils.error( "unknown packageName" )
+
+    return packageList, categoryList
+
 
