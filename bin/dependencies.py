@@ -202,17 +202,17 @@ def main():
 
     output_type = OUTPUT_DOT
 
+    for o, a in opts:
+        if o in ("-t", "--type"):
+            if a == "xml": output_type = OUTPUT_XML
+            else:          output_type = OUTPUT_DOT
+
     packageList, categoryList = portage.get_packages_categories(args[0])
 
     dep_tree = DependenciesTree()
 
     for catagory, package in zip(categoryList, packageList):
         dep_tree.add_dependencies(catagory, package)
-
-    for o, a in opts:
-        if o in ("-t", "--type"):
-            if a == "xml": output_type = OUTPUT_XML
-            else:          output_type = OUTPUT_DOT
 
     if   output_type == OUTPUT_XML: creator = XMLCreator()
     elif output_type == OUTPUT_DOT: creator = GraphvizCreator()
