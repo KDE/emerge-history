@@ -7,9 +7,95 @@ __author__  = "Sascha L. Teichmann <sascha.teichmann@intevation.de>"
 __license__ = "GNU General Public License (GPL)"
 
 import portage
-import utils
 import sys
 import os
+import getopt
+
+OUTPUT_DOT = 0
+OUTPUT_XML = 1
+
+class Visitor(object):
+
+    CONTINUE_CHILDREN = 1
+    IGNORE_CHILDREN   = 2
+
+    def before_children(self, node, context):
+        return Visitor.CONTINUE_CHILDREN
+    def after_children(self, node, context):
+        return Visitor.CONTINUE_CHILDREN
+
+class GraphvizCreator(Visitor):
+
+    def after_children(self, node, context):
+        visited, out, ranks = context
+        if not node.children: max_depth = 666
+        else:                 max_depth = node.max_depth()
+        ranks.setdefault(max_depth, set()).add(node)
+        for child in node.children:
+            link = '"%s" -> "%s"' % (node, child)
+            if link not in visited:
+                visited.add(link)
+                out.append(link)
+        return Visitor.CONTINUE_CHILDREN
+
+    def create_output(self, tree):
+        visited = set()
+        out = [
+            'digraph "dependencies" {', 
+            'ranksep=2;',
+            'size="6,6";' ]
+        ranks = {}
+        tree.visit(self, (visited, out, ranks))
+
+        for k, v in ranks.iteritems():
+            out.append("{ rank=same; ")
+            for n in v: out.append('"%s";' % n)
+            out.append("}")
+
+        out.append("}")
+
+        return "\n".join(out)
+
+class XMLCreator(Visitor):
+
+    def __init__(self):
+        self.nodes_so_far = {}
+        self.ignored      = False
+
+    def before_children(self, node, out):
+        if not isinstance(node, DependenciesNode):
+            return Visitor.CONTINUE_CHILDREN
+        node_name = str(node)
+        node_id = self.nodes_so_far.get(node_name)
+        if node_id is not None:
+            out.append('<dep ref="n%d"/>' % node_id)
+            self.ignored = True
+            return Visitor.IGNORE_CHILDREN
+
+        new_id = len(self.nodes_so_far)
+
+        self.nodes_so_far[node_name] = new_id
+        out.append('<dep id="n%d" cat="%s" pgk="%s" ver="%s" tag="%s"'% (
+            new_id,
+            node.category, node.package, node.version, node.tag))
+        if hasattr(node, "children") and not node.children:
+            out.append("/>")
+            self.ignored = True
+            return Visitor.IGNORE_CHILDREN
+        out.append(">")
+        return Visitor.CONTINUE_CHILDREN
+
+    def after_children(self, node, out):
+        if self.ignored: self.ignored = False
+        else:            out.append("</dep>")
+        return Visitor.CONTINUE_CHILDREN
+
+    def create_output(self, tree):
+        out = ['<?xml version="1.0" encoding="UTF-8" ?>\n']
+        out.append("<deps>")
+        tree.visit(self, out)
+        out.append("</deps>")
+        return ''.join(out)
 
 class DependenciesNode(object):
 
@@ -27,9 +113,10 @@ class DependenciesNode(object):
             self.category, self.package, self.version, self.tag)
 
     def visit(self, visitor, context):
-        for child in self.children:
-            child.visit(visitor, context)
-        visitor(self, context)
+        if visitor.before_children(self, context) == Visitor.CONTINUE_CHILDREN:
+            for child in self.children:
+                child.visit(visitor, context)
+        visitor.after_children(self, context)
 
     def max_depth(self):
         if not self.parents:
@@ -79,10 +166,8 @@ class DependenciesTree(object):
         key = "%s-%s-%s-%s" % (category, package, version, tag)
         try:
             node = self.key2node[key]
-            #print >> sys.stderr, "found node for key '%s'" % key
             return node
         except KeyError:
-            #print >> sys.stderr, "Node for '%s' not found" % key
             pass
 
         children = []
@@ -103,47 +188,38 @@ class DependenciesTree(object):
         for root in self.roots:
             root.visit(visitor, context)
 
-    def as_graphviz(self):
-        def visitor(node, context):
-            visited, out, ranks = context
-            if not node.children: max_depth = 666
-            else:                 max_depth = node.max_depth()
-            ranks.setdefault(max_depth, set()).add(node)
-            for child in node.children:
-                link = '"%s" -> "%s"' % (node, child)
-                if link not in visited:
-                    visited.add(link)
-                    out.append(link)
-        visited = set()
-        out = [
-            'digraph "dependencies" {', 
-            'ranksep=2;',
-            'size="6,6";' ]
-        ranks = {}
-        self.visit(visitor, (visited, out, ranks))
-
-        for k, v in ranks.iteritems():
-            out.append("{ rank=same; ")
-            for n in v: out.append('"%s";' % n)
-            out.append("}")
-
-        out.append("}")
-
-        return "\n".join(out)
-
 def main():
-    if len(sys.argv) < 2:
+
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "t:", ["type="])
+    except getopt.GetoptError, err:
+        print >> sys.stderr, str(err)
+        sys.exit(1)
+
+    if len(args) < 1:
         print >> sys.stderr, "missing package"
         sys.exit(1)
 
-    packageList, categoryList = portage.get_packages_categories(sys.argv[1])
+    output_type = OUTPUT_DOT
+
+    packageList, categoryList = portage.get_packages_categories(args[0])
 
     dep_tree = DependenciesTree()
 
     for catagory, package in zip(categoryList, packageList):
         dep_tree.add_dependencies(catagory, package)
 
-    print dep_tree.as_graphviz()
+    for o, a in opts:
+        if o in ("-t", "--type"):
+            if a == "xml": output_type = OUTPUT_XML
+            else:          output_type = OUTPUT_DOT
+
+    if   output_type == OUTPUT_XML: creator = XMLCreator()
+    elif output_type == OUTPUT_DOT: creator = GraphvizCreator()
+
+    output = creator.create_output(dep_tree)
+
+    print output
 
 if __name__ == '__main__':
     main()
