@@ -23,8 +23,7 @@ def __import__( module ):
         # TODO: Impove importing ...
         suff_indices, suff_idx = imp.get_suffixes(), 1
         for idx, suff in enumerate(suff_indices):
-            if suff[0].startswith(".py"): suff_idx = idx; break
-
+            if suff[0] == ".py": suff_idx = idx; break
         return imp.load_module( modulename.replace('.', '_'), 
             fileHdl, module, suff_indices[suff_idx] )
 
@@ -477,7 +476,14 @@ def remInstalled( category, package, version, buildType='' ):
         os.rename( tmpdbfile, dbfile )
     return found
 
-def get_packages_categories(packageName):
+def get_packages_categories(packageName, defaultCategory = None):
+
+    if defaultCategory is None:
+        if "EMERGE_DEFAULTCATEGORY" in os.environ:
+            defaultCategory = os.environ["EMERGE_DEFAULTCATEGORY"]
+        else:
+            defaultCategory = "kde"
+
     packageList, categoryList = [], []
 
     if len( packageName.split( "/" ) ) == 1:
