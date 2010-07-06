@@ -42,15 +42,12 @@ class Job(object):
         self.dep_count -= 1
         return self.dep_count < 1
 
-    def key(self):
-        return str(self.node)
-
-    def is_buildable(self):
-        return self.dep_exit == 0
-
-    def transfer(self, command):
-        return (str(self.node), self.create_command(command))
-
+    def trigger_exec(self, command):
+        if self.dep_exit != 0:
+            # propagate error
+            return (str(self.node), "", self.dep_exit)
+        else:
+            return (str(self.node), self.create_command(command))
 
 class Worker(Process):
 
@@ -63,13 +60,17 @@ class Worker(Process):
 
     def run(self):
         while True:
-            (key, command) = self.todo.get()
-            exit_code = 1
-            try:
-                exit_code = os.system(command)
-            except:
-                traceback.print_exc()
-            self.done.put((key, exit_code))
+            execute = self.todo.get()
+            if len(execute) > 2:
+                # propagate error
+                self.done.put((execute[0], execute[2]))
+            else:
+                exit_code = 1
+                try:
+                    exit_code = os.system(execute[1])
+                except:
+                    traceback.print_exc()
+                self.done.put((execute[0], exit_code))
 
 class ParallelBuilder(object):
 
@@ -116,7 +117,7 @@ class ParallelBuilder(object):
         for _ in range(num_worker): Worker(todo, done)
 
         for job in ready:
-            todo.put(job.transfer(self.command))
+            todo.put(job.trigger_exec(self.command))
 
         ready = None
 
@@ -131,8 +132,8 @@ class ParallelBuilder(object):
                 break
 
             for job in blocked_list:
-                if job.unblock(exit_code) and job.is_buildable():
-                    todo.put(job.transfer(self.command))
+                if job.unblock(exit_code):
+                    todo.put(job.trigger_exec(self.command))
 
             jobs_left -= 1
 
