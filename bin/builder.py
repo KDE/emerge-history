@@ -14,7 +14,7 @@ import portage
 
 from dependencies import DependenciesTree
 
-DEFAULT_COMMAND = "python %s --install %%(category)s/%%(package)s" % \
+DEFAULT_COMMAND = "python %s %%(category)s/%%(package)s" % \
     os.path.join(os.getenv("KDEROOT", os.curdir), "bin", "emerge.py")
 
 class Builder(object):
@@ -75,8 +75,8 @@ def main():
 
     dep_tree = DependenciesTree()
 
-    for catagory, package in zip(categoryList, packageList):
-        dep_tree.add_dependencies(catagory, package)
+    for category, package in zip(categoryList, packageList):
+        dep_tree.add_dependencies(category, package)
 
     builder = Builder(command)
 

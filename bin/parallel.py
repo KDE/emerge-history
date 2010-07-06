@@ -19,7 +19,7 @@ from dependencies import DependenciesTree
 
 from multiprocessing import Process, Queue, cpu_count
 
-DEFAULT_COMMAND = "python %s --install %%(category)s/%%(package)s" % \
+DEFAULT_COMMAND = "python %s %%(category)s/%%(package)s" % \
     os.path.join(os.getenv("KDEROOT", os.curdir), "bin", "emerge.py")
 
 class Job(object):
