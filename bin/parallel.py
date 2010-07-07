@@ -10,6 +10,7 @@ import getopt
 import os.path
 import sys
 import traceback
+from datetime import datetime
 
 import portage
 
@@ -167,8 +168,10 @@ def main():
         dep_tree.add_dependencies(category, package)
 
     builder = ParallelBuilder(command)
-
+    
+    print datetime.now()
     builder.build(dep_tree, num_worker)
+    print datetime.now()
 
 if __name__ == '__main__':
     main()
