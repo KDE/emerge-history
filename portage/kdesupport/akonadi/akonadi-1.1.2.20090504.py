@@ -11,9 +11,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/libxslt'] = 'default'
         self.hardDependencies['libs/qt'] = 'default'
         
-        # temporary, until we have ported some of the indirect dependencies
-        if not platform.isCrossCompilingEnabled():
-            self.hardDependencies['win32libs-bin/shared-mime-info'] = 'default'
+        self.hardDependencies['win32libs-bin/shared-mime-info'] = 'default'
 
         self.boostversion = "1.37"
 
@@ -33,10 +31,6 @@ class subinfo(info.infoclass):
         self.svnTargets['svnHEAD'] = 'trunk/kdesupport/akonadi'
         self.defaultTarget = 'svnHEAD'
 
-    def setBuildOptions( self ):
-        self.disableHostBuild = True
-        self.disableTargetBuild = False
-
 from Package.CMakePackageBase import *
 
 class Package(CMakePackageBase):
@@ -48,13 +42,12 @@ class Package(CMakePackageBase):
         self.boost = portage.getPackageInstance("win32libs-bin","boost")
         self.subinfo.options.configure.defines += " -DBoost_INCLUDE_DIR=" + os.path.join(self.boost.mergeDestinationDir(), "include", "boost-" + self.subinfo.boostversion.replace(".", "_") )
         
-        self.subinfo.options.configure.defines = ""
         qmake = os.path.join(self.mergeDestinationDir(), "bin", "qmake.exe")
         if not os.path.exists(qmake):
             print("<%s>") % qmake
             utils.die("could not found qmake")
         ## \todo a standardized way to check if a package is installed in the image dir would be good.
-        self.subinfo.options.configure.defines += "-DQT_QMAKE_EXECUTABLE:FILEPATH=%s " \
+        self.subinfo.options.configure.defines += " -DQT_QMAKE_EXECUTABLE:FILEPATH=%s " \
             % qmake.replace('\\', '/')
             
         self.subinfo.options.configure.defines += "-DHOST_BINDIR=%s " \

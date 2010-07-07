@@ -1,5 +1,6 @@
 import base
 import info
+import platform
 
 class subinfo(info.infoclass):
     def setTargets( self ):
@@ -13,7 +14,8 @@ class subinfo(info.infoclass):
         self.hardDependencies['win32libs-bin/giflib']  = 'default'
 #        self.hardDependencies['win32libs-bin/gssapi']  = 'default'
 #        self.hardDependencies['win32libs-bin/hspell']  = 'default'
-        self.hardDependencies['win32libs-bin/jasper']  = 'default'
+        if not platform.isCrossCompilingEnabled():
+            self.hardDependencies['win32libs-bin/jasper']  = 'default'
         self.hardDependencies['win32libs-bin/jpeg']  = 'default'
         self.hardDependencies['win32libs-bin/libbzip2']  = 'default'
         self.hardDependencies['win32libs-bin/libpng']  = 'default'
@@ -22,7 +24,8 @@ class subinfo(info.infoclass):
 #        self.hardDependencies['win32libs-bin/openexr']  = 'default'
         self.hardDependencies['win32libs-bin/openssl']  = 'default'
         self.hardDependencies['win32libs-bin/pcre']  = 'default'
-        self.hardDependencies['win32libs-bin/shared-mime-info']  = 'default'
+        if not platform.isCrossCompilingEnabled():
+            self.hardDependencies['win32libs-bin/shared-mime-info']  = 'default'
         self.hardDependencies['win32libs-bin/zlib']  = 'default'
     
 class subclass(base.baseclass):

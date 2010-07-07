@@ -6,8 +6,9 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['2.3.1'] = 'git://gitorious.org/amarok/amarok.git|2.3.1'
-        self.svnTargets['gitHEAD'] = 'git://gitorious.org/amarok/amarok.git'
+        self.targets[ '2.3.1' ] =  'http://download.kde.org/download.php?url=stable/amarok/2.3.1/src/amarok-2.3.1.tar.bz2'
+        self.targetInstSrc[ '2.3.1' ] = "amarok-2.3.1"
+        self.svnTargets['gitHEAD'] = 'git://git.kde.org/amarok/amarok.git'
         self.defaultTarget = 'gitHEAD'
     
     def setDependencies( self ):

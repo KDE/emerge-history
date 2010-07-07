@@ -9,6 +9,8 @@ import utils
 
 import base
 import info
+import compiler
+import compilercache
 
 from BuildSystemBase import *
 
@@ -81,6 +83,7 @@ class CMakeBuildSystem(BuildSystemBase):
         options = BuildSystemBase.configureOptions(self)
         
         ## \todo why is it required to replace \\ by / ? 
+        options += compilercache.getCMakeArguments()
         options += " -DCMAKE_INSTALL_PREFIX=\"%s\"" % self.mergeDestinationDir().replace( "\\", "/" )
 
         options += " -DCMAKE_INCLUDE_PATH=\"%s\"" % \
@@ -88,6 +91,9 @@ class CMakeBuildSystem(BuildSystemBase):
 
         options += " -DCMAKE_LIBRARY_PATH=\"%s\"" % \
             os.path.join( self.mergeDestinationDir(), "lib" ).replace( "\\", "/" )
+            
+        options += " -DCMAKE_PREFIX_PATH=\"%s\"" % \
+            self.mergeDestinationDir().replace( "\\", "/" )
 
         if( not self.buildType() == None ):
             options += " -DCMAKE_BUILD_TYPE=%s" % self.buildType()             
