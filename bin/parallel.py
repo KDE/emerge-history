@@ -124,8 +124,12 @@ class ParallelBuilder(object):
 
         jobs_left = len(jobs)
 
+        final_exit_code = 0
+
         while jobs_left:
             key, exit_code = done.get()
+
+            if exit_code != 0: final_exit_code = exit_code
 
             try:
                 blocked_list = blocked.pop(key)
@@ -137,6 +141,8 @@ class ParallelBuilder(object):
                     todo.put(job.trigger_exec(self.command))
 
             jobs_left -= 1
+
+        return final_exit_code
 
 def main():
     try:
@@ -169,9 +175,11 @@ def main():
 
     builder = ParallelBuilder(command)
     
-    print datetime.now()
-    builder.build(dep_tree, num_worker)
-    print datetime.now()
+    print datetime.now().strftime("%H:%m")
+    exit_code = builder.build(dep_tree, num_worker)
+    print datetime.now().strftime("%H:%m")
+
+    sys.exit(exit_code)
 
 if __name__ == '__main__':
     main()
