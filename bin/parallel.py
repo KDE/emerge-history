@@ -175,9 +175,9 @@ def main():
 
     builder = ParallelBuilder(command)
     
-    print datetime.now().strftime("%H:%m")
+    print datetime.now().strftime("%H:%M")
     exit_code = builder.build(dep_tree, num_worker)
-    print datetime.now().strftime("%H:%m")
+    print datetime.now().strftime("%H:%M")
 
     sys.exit(exit_code)
 
