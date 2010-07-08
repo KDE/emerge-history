@@ -5,17 +5,16 @@ from Package.CMakePackageBase import *
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.targets['1.0.21'] = 'http://www.mega-nerd.com/libsndfile/files/libsndfile-1.0.21.tar.gz'
-        self.targetInstSrc['1.0.21'] = 'libsndfile-1.0.21'
-        self.patchToApply['1.0.21'] = ('libsndfile-1.0.21-20100708.diff', 1)
+        self.targets['1.3.1'] = 'http://downloads.xiph.org/releases/vorbis/libvorbis-1.3.1.tar.gz'
+        self.targetInstSrc['1.3.1'] = 'libvorbis-1.3.1'
+        self.patchToApply['1.3.1'] = ('libvorbis-1.3.1-20100708.diff', 1)
         self.options.package.withCompiler = False
-        self.options.package.packageName = "libsndfile"
-        self.defaultTarget = '1.0.21'
+        self.options.package.packageName = "libvorbis"
+        self.defaultTarget = '1.3.1'
 
     def setDependencies( self ):
         self.hardDependencies['gnuwin32/wget'] = 'default'
         self.hardDependencies['testing/libogg-src'] = 'default'
-        self.hardDependencies['testing/libvorbis-src'] = 'default'
         
 class Package(CMakePackageBase):
     def __init__( self, **args ):

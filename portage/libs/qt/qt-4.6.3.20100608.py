@@ -35,6 +35,7 @@ class subinfo(info.infoclass):
         self.svnTargets['v4.7.0-beta1'] = "git://gitorious.org/qt/qt.git|4.7|v4.7.0-beta1|"
         self.targetSrcSuffix['4.7'] = "4.7"
         self.patchToApply['4.7'] = ('qt-4.7.0.patch', 1)
+        self.patchToApply['v4.7.0-beta1'] = ('qt-4.7.0.patch', 1)
         
         if platform.isCrossCompilingEnabled() or ( platform.buildArchitecture() == 'x64' and COMPILER == "mingw4" ):
             if platform.isCrossCompilingEnabled():
@@ -52,10 +53,7 @@ class subinfo(info.infoclass):
         self.hardDependencies['virtual/base'] = 'default'
         self.hardDependencies['dev-util/perl'] = 'default'
         self.hardDependencies['win32libs-bin/openssl'] = 'default'
-        if COMPILER == 'msvc2008':
-            self.hardDependencies['win32libs-sources/dbus-src'] = 'default'
-        else:
-            self.hardDependencies['win32libs-bin/dbus'] = 'default'
+        self.hardDependencies['win32libs-sources/dbus-src'] = 'default'
         if not platform.isCrossCompilingEnabled():
             self.hardDependencies['testing/mysql-pkg'] = 'default'
 
@@ -68,10 +66,7 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
         KDEWinPackager.__init__(self)
         # get instance of dbus and openssl package
         self.openssl = portage.getPackageInstance('win32libs-bin','openssl')
-        if COMPILER == 'msvc2008':
-            self.dbus = portage.getPackageInstance('win32libs-sources','dbus-src')
-        else:
-            self.dbus = portage.getPackageInstance('win32libs-bin','dbus')
+        self.dbus = portage.getPackageInstance('win32libs-sources','dbus-src')
         if not platform.isCrossCompilingEnabled():
             self.mysql_server = portage.getPackageInstance('testing','mysql-pkg')
 
