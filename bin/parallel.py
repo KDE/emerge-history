@@ -23,6 +23,14 @@ from multiprocessing import Process, Queue, cpu_count
 DEFAULT_COMMAND = "python %s %%(category)s/%%(package)s" % \
     os.path.join(os.getenv("KDEROOT", os.curdir), "bin", "emerge.py")
 
+
+def now():
+    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+def log(kind, msg):
+    print "builder: %s %s %s" % (now(), kind, msg)
+    sys.stdout.flush()
+
 class Job(object):
 
     def __init__(self, node):
@@ -66,11 +74,15 @@ class Worker(Process):
                 # propagate error
                 self.done.put((execute[0], execute[2]))
             else:
+                log("start", execute[0])
+                sys.stdout.flush()
                 exit_code = 1
                 try:
                     exit_code = os.system(execute[1])
                 except:
                     traceback.print_exc()
+                log("stop", execute[0])
+                sys.stdout.flush()
                 self.done.put((execute[0], exit_code))
 
 class ParallelBuilder(object):
@@ -175,9 +187,10 @@ def main():
 
     builder = ParallelBuilder(command)
     
-    print datetime.now().strftime("%H:%M")
+    log("start", "all")
+    print "parallel: %s start all" % now()
     exit_code = builder.build(dep_tree, num_worker)
-    print datetime.now().strftime("%H:%M")
+    log("stop", "all")
 
     sys.exit(exit_code)
 
