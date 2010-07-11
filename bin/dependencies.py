@@ -2,6 +2,25 @@
 # -*- coding: utf-8 -*-
 #
 # copyright 2010 by Intevation GmbH
+#
+"""Tool to generate Graphviz DOT file of the package dependencies
+   for a given emerge package. Doubles as a library for explict
+   dependency graph traverals.
+
+   Usage:
+
+   Precondition: Set the environment variables needed by emerge.
+
+   $ python bin/dependencies.py -t <type of output> <emerge package> > deps.dot
+
+   with <type of output> being the kind of output send to stdout.
+   Possible values: 'dot' and 'xml'. Defaults to 'dot'
+
+   The output is send to stdout. Piped into a file you may use
+   dot to generate a graphical version.
+
+   $ dot -T svg -o deps.svg deps.dot
+"""
 
 __author__  = "Sascha L. Teichmann <sascha.teichmann@intevation.de>"
 __license__ = "GNU General Public License (GPL)"
@@ -15,16 +34,23 @@ OUTPUT_DOT = 0
 OUTPUT_XML = 1
 
 class Visitor(object):
+    """Visitor applied to a node in the 
+       dependency graph during traversal
+    """
 
     CONTINUE_CHILDREN = 1
     IGNORE_CHILDREN   = 2
 
     def before_children(self, node, context):
+        """Called before the children of the node are visited."""
         return Visitor.CONTINUE_CHILDREN
+
     def after_children(self, node, context):
+        """Called after the children  of the node are visited."""
         return Visitor.CONTINUE_CHILDREN
 
 class GraphvizCreator(Visitor):
+    """Visitor to create DOT files from dependency graphs."""
 
     def after_children(self, node, context):
         visited, out, ranks = context
@@ -57,6 +83,7 @@ class GraphvizCreator(Visitor):
         return "\n".join(out)
 
 class XMLCreator(Visitor):
+    """Visitor to create an XML representation of the dependency graph."""
 
     def __init__(self):
         self.nodes_so_far = {}
@@ -98,6 +125,7 @@ class XMLCreator(Visitor):
         return ''.join(out)
 
 class DependenciesNode(object):
+    """A node in the dependency graph."""
 
     def __init__(self, category, package, version, tag = "1", children = None):
         if children is None: children = []
@@ -113,12 +141,14 @@ class DependenciesNode(object):
             self.category, self.package, self.version, self.tag)
 
     def visit(self, visitor, context):
+        """Apply a visitor to this node."""
         if visitor.before_children(self, context) == Visitor.CONTINUE_CHILDREN:
             for child in self.children:
                 child.visit(visitor, context)
         visitor.after_children(self, context)
 
     def max_depth(self):
+        """Calculates the maximum depth of this node."""
         if not self.parents:
             return 0
         pdepth = -1
@@ -128,12 +158,14 @@ class DependenciesNode(object):
         return pdepth + 1
 
 class DependenciesTree(object):
+    """A dependency tree. More a kind of DAG (directed acyclic graph)."""
 
     def __init__(self):
         self.roots    = []
         self.key2node = {}
 
     def add_dependencies(self, category, package, version = ""):
+        """Add a new root dependency tree to this graph."""
 
         pi = portage.PortageInstance
 
@@ -163,6 +195,7 @@ class DependenciesTree(object):
             self.roots.append(node)
 
     def build_dep_node(self, category, package, version, tag):
+        """Recursive method to construct the nodes of the dependency tree."""
         key = "%s-%s-%s-%s" % (category, package, version, tag)
         try:
             node = self.key2node[key]
@@ -185,6 +218,7 @@ class DependenciesTree(object):
         return node
 
     def visit(self, visitor, context):
+        """Apply a visitor to all parts of this graph."""
         for root in self.roots:
             root.visit(visitor, context)
 
