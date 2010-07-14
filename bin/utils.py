@@ -60,7 +60,7 @@ class LockFile(object):
         self.file_handle = None
 
     def __enter__(self):
-        if not self.file_handle: return
+        if not self.file_name: return
 
         self.file_handle = open(self.file_name, 'a')
         fh = self.file_handle
