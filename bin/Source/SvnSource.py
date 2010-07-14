@@ -7,70 +7,8 @@
 from VersionSystemSourceBase import *
 
 import os.path
+
 import utils
-
-import traceback
-import tempfile
-import getpass
-
-if os.name == 'nt': import msvcrt
-else:               import fcntl
-
-SVN_LOCK_FILE = "emergesvn-%s.lck"
-
-def svn_lock_file_name():
-    '''Generate a user global svn lock file.
-       TODO: generate it smarter to prevent security issues
-             and possible collisions.
-    '''
-    return os.path.join(
-        tempfile.gettempdir(), SVN_LOCK_FILE % getpass.getuser())
-
-class Locker(object):
-    """Context manager for a user global SVN lock"""
-
-    def __init__(self, file_name):
-        self.file_name   = file_name
-        self.file_handle = None
-
-    def __enter__(self):
-        do_lock = os.environ.get("EMERGE_SVN_LOCK")
-        if not do_lock or do_lock.strip().lower() not in ("true", "yes"):
-            return
-
-        self.file_handle = open(self.file_name, 'a')
-        fh = self.file_handle
-
-        if os.name == 'nt':
-            fh.seek(0)
-            while True:
-                try:
-                    msvcrt.locking(fh.fileno(), msvcrt.LK_LOCK, 2147483647L)
-                except IOError, msg:
-                    # after 15 secs (every 1 sec, 1 attempt -> 15 secs)
-                    # a exception is raised but we want to continue trying.
-                    continue
-                break
-        else:
-            fcntl.flock(fh, fcntl.LOCK_EX)
-
-        fh.truncate(0)
-        print >> fh, "%d" % os.getpid()
-        fh.flush()
-
-    def __exit__(self, exc_type, exc_value, exc_tb):
-        fh = self.file_handle
-        if fh is None: return
-        self.file_handle = None
-        if os.name == 'nt':
-            fh.seek(0)
-            msvcrt.locking(fh.fileno(), msvcrt.LK_UNLCK, 2147483647L)
-        else:
-            fcntl.flock(fh, fcntl.LOCK_UN)
-        try:
-            fh.close()
-        except:
-            traceback.print_exc()
 
 class SvnSource (VersionSystemSourceBase):
     """subversion support"""
@@ -190,13 +128,13 @@ class SvnSource (VersionSystemSourceBase):
         else:
             cmd = "%s/svn checkout %s %s %s" % (self.svnInstallDir, option, url, sourcedir )
 
-        with Locker(svn_lock_file_name()):
+        with utils.LockFile(utils.svn_lock_file_name()):
             return utils.system( cmd )
 
     def createPatch( self ):
         """create patch file from svn source into the related package dir. The patch file is named autocreated.patch"""
         cmd = "%s/svn diff %s > %s" % ( self.svnInstallDir, self.sourceDir(), os.path.join( self.packageDir(), "%s-%s.patch" % ( self.package, str( datetime.date.today() ).replace('-', '') ) ) )
-        with Locker(svn_lock_file_name()):
+        with utils.LockFile(utils.svn_lock_file_name()):
             return utils.system( cmd )
 
     def sourceVersion( self ):
@@ -215,7 +153,7 @@ class SvnSource (VersionSystemSourceBase):
         tempfile = open( os.path.join( self.sourceDir().replace('/', '\\'), ".emergesvninfo.tmp" ), "wb+" )
         
         # run the command
-        with Locker(svn_lock_file_name()):
+        with utils.LockFile(utils.svn_lock_file_name()):
             utils.system( cmd, outstream=tempfile )
 
         tempfile.seek(os.SEEK_SET)
