@@ -45,6 +45,8 @@ import getopt
 import os.path
 import sys
 import traceback
+import tempfile
+import getpass
 
 from datetime import datetime
 
@@ -60,6 +62,8 @@ from dependencies import DependenciesTree
 DEFAULT_COMMAND = "python %s %%(category)s/%%(package)s" % \
     os.path.join(os.getenv("KDEROOT", os.curdir), "bin", "emerge.py")
 
+SVN_LOCK_FILE_TEMPLATE = "emergesvn-%s-%d.lck"
+
 
 def now():
     """Returns current timestamp as string"""
@@ -69,6 +73,39 @@ def log(kind, msg):
     """Writes timestamped message"""
     print "builder: %s %s %s" % (now(), kind, msg)
     sys.stdout.flush()
+
+def unique_svn_lock_filename():
+    """Generates a unique name for the SVN lock file."""
+    dirname = tempfile.gettempdir()
+    user    = getpass.getuser()
+    num     = 0
+    while True:
+        filename = os.path.join(
+            dirname, SVN_LOCK_FILE_TEMPLATE % (user, num))
+        if not os.path.exists(filename):
+            return filename
+        num += 1
+
+class ExecutionContext(object):
+    """Context manager which injects an SVN lock name
+       into the called emerges and ensures that
+       the corresponding file will be removed at 
+       the end of the program.
+    """
+
+    def __init__(self):
+        self.svnlock = unique_svn_lock_filename()
+
+    def __enter__(self): 
+        log("start", "all")
+        os.environ["EMERGE_SVN_LOCK"     ] = "True"
+        os.environ["EMERGE_SVN_LOCK_FILE"] = self.svnlock
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if os.path.exists(self.svnlock):
+            try: os.remove(self.svnlock)
+            except: pass
+        log("stop", "all")
 
 class Job(object):
     """An emerge work job.
@@ -264,9 +301,8 @@ def main():
 
     builder = ParallelBuilder(command)
     
-    log("start", "all")
-    exit_code = builder.build(dep_tree, num_worker)
-    log("stop", "all")
+    with ExecutionContext():
+        exit_code = builder.build(dep_tree, num_worker)
 
     sys.exit(exit_code)
 
