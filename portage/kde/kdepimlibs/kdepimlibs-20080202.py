@@ -18,7 +18,7 @@ class subinfo(info.infoclass):
         if not platform.isCrossCompilingEnabled():
             self.hardDependencies['win32libs-bin/gpgme'] = 'default'
         else:
-            self.hardDependencies['win32libs-bin/gpgme-pkg'] = 'default'
+            self.hardDependencies['contributed/gpg4win-dev'] = 'default'
 
 from Package.CMakePackageBase import *
         
@@ -32,6 +32,9 @@ class Package(CMakePackageBase):
         
         self.subinfo.options.configure.defines = "-DHOST_BINDIR=%s " \
             % os.path.join(ROOTDIR, "bin")
+            
+        if platform.isCrossCompilingEnabled():
+            self.subinfo.options.configure.defines += "-DBUILD_doc=OFF "
 
 if __name__ == '__main__':
     Package().execute()
