@@ -1,95 +1,43 @@
-From 77e7acc841d412eff7d2693e7445f12ab7956b29 Mon Sep 17 00:00:00 2001
-From: Christian Ehrlicher <ch.ehrlicher@gmx.de>
-Date: Fri, 19 Sep 2008 17:41:26 +0200
-Subject: [PATCH] Fix configure.exe to do an out-of-source build on windows
-
-qt-bugs@ issue : N227213
-Trolltech task ID : none yet
----
- bin/syncqt             |    6 +++++-
- projects.pro           |    3 +++
- src/tools/moc/main.cpp |    6 ++++++
- 3 files changed, 14 insertions(+), 1 deletions(-)
-
-diff --git a/bin/syncqt b/bin/syncqt
-index a14a82d..ac140eb 100755
---- a/bin/syncqt
-+++ b/bin/syncqt
-@@ -366,9 +366,13 @@ sub fixPaths {
-         $match_dir = $tmp;
-         $i = $slash;
-     }
-+    my $cnt_ofs = 0;
-+    if($match_dir =~ /^[a-zA-Z]:$/) {
-+      $cnt_ofs = 1;
-+    }
-     if($match_dir) {
-         my $after = substr($dir, length($match_dir));
--        my $count = ($after =~ tr,/,,);
-+        my $count = ($after =~ tr,/,,) - $cnt_ofs;
-         my $dots = "";
-         for(my $i = 0; $i < $count; $i++) {
-             $dots .= "../";
-diff --git a/src/tools/moc/main.cpp b/src/tools/moc/main.cpp
-index 8e033b7..b5b2edd 100644
---- a/src/tools/moc/main.cpp
-+++ b/src/tools/moc/main.cpp
-@@ -94,7 +94,13 @@ static QByteArray combinePath(const char *infile, const char *outfile)
-         inSplitted.prepend(QLatin1String(".."));
-     }
-     inSplitted.append(inFileInfo.fileName());
-+#ifdef Q_WS_WIN
-+    const QString rel = inSplitted.join(QLatin1String("/"));
-+    const QString abs = inFileInfo.absoluteFilePath();
-+    return QFile::encodeName(rel.length() < abs.length() ? rel : abs);
-+#else
-     return QFile::encodeName(inSplitted.join(QLatin1String("/")));
-+#endif
- }
- 
- 
--- 
-1.6.5.1.1367.gcd48
-
-From 573da53983e355f65cd9f568c8a81fb2af153a9b Mon Sep 17 00:00:00 2001
+From 786a22d9d76b27f72c95b8edfb7f451b92436345 Mon Sep 17 00:00:00 2001
 From: Romain Pokrzywka <romain@kdab.com>
-Date: Fri, 16 Jul 2010 13:48:49 +0200
+Date: Fri, 16 Jul 2010 15:53:29 +0200
 Subject: fixed the export macro for the QtDbus module
 
 ---
- src/corelib/global/qglobal.h        |    8 ++++++
- src/dbus/dbus.pro                   |    2 +-
- src/dbus/qdbusabstractadaptor.h     |    2 +-
- src/dbus/qdbusabstractinterface.h   |    4 +-
- src/dbus/qdbusargument.h            |   48 +++++++++++++++++-----------------
- src/dbus/qdbusconnection.cpp        |    2 +-
- src/dbus/qdbusconnection.h          |    2 +-
- src/dbus/qdbusconnectioninterface.h |    2 +-
- src/dbus/qdbuscontext.h             |    2 +-
- src/dbus/qdbuserror.h               |    4 +-
- src/dbus/qdbusextratypes.h          |    4 +-
- src/dbus/qdbusintegrator.cpp        |    2 +-
- src/dbus/qdbusinterface.h           |    2 +-
- src/dbus/qdbusintrospection_p.h     |    2 +-
- src/dbus/qdbusmacros.h              |    8 ------
- src/dbus/qdbusmessage.h             |    4 +-
- src/dbus/qdbusmetaobject_p.h        |    2 +-
- src/dbus/qdbusmetatype.h            |    2 +-
- src/dbus/qdbuspendingcall.h         |    4 +-
- src/dbus/qdbuspendingreply.h        |    2 +-
- src/dbus/qdbusreply.h               |    2 +-
- src/dbus/qdbusserver.h              |    2 +-
- src/dbus/qdbusservicewatcher.h      |    2 +-
- src/dbus/qdbusthreaddebug_p.h       |    4 +-
- src/dbus/qdbusutil_p.h              |   20 +++++++-------
- src/dbus/qdbusxmlgenerator.cpp      |    2 +-
- 26 files changed, 70 insertions(+), 70 deletions(-)
+ src/corelib/global/qglobal.h              |    8 +++++
+ src/dbus/dbus.pro                         |    2 +-
+ src/dbus/qdbusabstractadaptor.h           |    2 +-
+ src/dbus/qdbusabstractinterface.h         |    4 +-
+ src/dbus/qdbusargument.h                  |   48 ++++++++++++++--------------
+ src/dbus/qdbusconnection.cpp              |    2 +-
+ src/dbus/qdbusconnection.h                |    2 +-
+ src/dbus/qdbusconnectioninterface.h       |    2 +-
+ src/dbus/qdbuscontext.h                   |    2 +-
+ src/dbus/qdbuserror.h                     |    4 +-
+ src/dbus/qdbusextratypes.h                |    4 +-
+ src/dbus/qdbusintegrator.cpp              |    2 +-
+ src/dbus/qdbusinterface.h                 |    2 +-
+ src/dbus/qdbusintrospection_p.h           |    2 +-
+ src/dbus/qdbusmacros.h                    |    8 -----
+ src/dbus/qdbusmessage.h                   |    4 +-
+ src/dbus/qdbusmetaobject_p.h              |    2 +-
+ src/dbus/qdbusmetatype.h                  |    2 +-
+ src/dbus/qdbuspendingcall.h               |    4 +-
+ src/dbus/qdbuspendingreply.h              |    2 +-
+ src/dbus/qdbusreply.h                     |    2 +-
+ src/dbus/qdbusserver.h                    |    2 +-
+ src/dbus/qdbusservicewatcher.h            |    2 +-
+ src/dbus/qdbusthreaddebug_p.h             |    4 +-
+ src/dbus/qdbusutil_p.h                    |   20 ++++++------
+ src/dbus/qdbusxmlgenerator.cpp            |    2 +-
+ tools/qdbus/qdbuscpp2xml/qdbuscpp2xml.cpp |    2 +-
+ 27 files changed, 71 insertions(+), 71 deletions(-)
 
 diff --git a/src/corelib/global/qglobal.h b/src/corelib/global/qglobal.h
-index 1eab394..61320b8 100644
+index 8a3166d..7b915cd 100644
 --- a/src/corelib/global/qglobal.h
 +++ b/src/corelib/global/qglobal.h
-@@ -1278,6 +1278,11 @@ class QDataStream;
+@@ -1277,6 +1277,11 @@ class QDataStream;
  #    else
  #      define Q_COMPAT_EXPORT Q_DECL_IMPORT
  #    endif
@@ -101,7 +49,7 @@ index 1eab394..61320b8 100644
  #    define Q_TEMPLATEDLL
  #  elif defined(QT_DLL) /* use a Qt DLL library */
  #    define Q_CORE_EXPORT Q_DECL_IMPORT
-@@ -1295,6 +1300,7 @@ class QDataStream;
+@@ -1294,6 +1299,7 @@ class QDataStream;
  #    define Q_SCRIPT_EXPORT Q_DECL_IMPORT
  #    define Q_SCRIPTTOOLS_EXPORT Q_DECL_IMPORT
  #    define Q_COMPAT_EXPORT Q_DECL_IMPORT
@@ -109,7 +57,7 @@ index 1eab394..61320b8 100644
  #    define Q_TEMPLATEDLL
  #  endif
  #  define Q_NO_DECLARED_NOT_DEFINED
-@@ -1323,6 +1329,7 @@ class QDataStream;
+@@ -1322,6 +1328,7 @@ class QDataStream;
  #    define Q_SCRIPT_EXPORT Q_DECL_EXPORT
  #    define Q_SCRIPTTOOLS_EXPORT Q_DECL_EXPORT
  #    define Q_COMPAT_EXPORT Q_DECL_EXPORT
@@ -117,7 +65,7 @@ index 1eab394..61320b8 100644
  #  else
  #    define Q_CORE_EXPORT
  #    define Q_GUI_EXPORT
-@@ -1337,6 +1344,7 @@ class QDataStream;
+@@ -1336,6 +1343,7 @@ class QDataStream;
  #    define Q_SCRIPT_EXPORT
  #    define Q_SCRIPTTOOLS_EXPORT
  #    define Q_COMPAT_EXPORT
@@ -612,21 +560,4 @@ index 3a80019..ba2bdd8 100644
  
 -- 
 1.6.5.1.1367.gcd48
-
-From: TheOneRing
-Subject: [PATCH] Fix for X64
-
-diff --git a/src/3rdparty/webkit/JavaScriptCore/jit/JITStubs.cpp b/src/3rdparty/webkit/JavaScriptCore/jit/JITStubs.cpp
-index daa945c..4fe954e 100644
---- a/src/3rdparty/webkit/JavaScriptCore/jit/JITStubs.cpp
-+++ b/src/3rdparty/webkit/JavaScriptCore/jit/JITStubs.cpp
-@@ -65,7 +65,7 @@ using namespace std;
-
- namespace JSC {
-
--#if OS(DARWIN) || OS(WINDOWS)
-+#if OS(DARWIN) || (OS(WINDOWS) && !CPU(X86_64))
- #define SYMBOL_STRING(name) "_" #name
- #else
- #define SYMBOL_STRING(name) #name
 

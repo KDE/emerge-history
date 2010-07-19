@@ -35,14 +35,12 @@ class subinfo(info.infoclass):
         self.svnTargets['v4.7.0-beta2'] = "git://gitorious.org/qt/qt.git|4.7|v4.7.0-beta2|"
         self.targetSrcSuffix['4.7'] = "4.7"
         self.targetSrcSuffix['v4.7.0-beta2'] = "4.7"
+        self.patchToApply['4.6.3'] = ('qt-4.6.3.patch', 1)
         self.patchToApply['4.7'] = ('qt-4.7.0.patch', 1)
         self.patchToApply['v4.7.0-beta2'] = ('qt-4.7.0.patch', 1)
         
         if platform.isCrossCompilingEnabled() or ( platform.buildArchitecture() == 'x64' and COMPILER == "mingw4" ):
-            if platform.isCrossCompilingEnabled():
-                self.defaultTarget = 'v4.7.0-beta2'
-            else:
-                self.defaultTarget = '4.7'
+            self.defaultTarget = '4.7'
         else:
             self.defaultTarget = '4.6.3'
         
@@ -105,11 +103,8 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             command += "-xplatform %s " % xplatform
             
         if self.isHostBuild():
-            command += "-no-xmlpatterns "
-        
-
-        command += "-qt-gif -qt-libpng -qt-libjpeg -qt-libtiff -openssl-linked -webkit "
-            
+            command += "-no-xmlpatterns -no-declarative -no-multimedia -no-opengl "
+                    
         if not platform.isCrossCompilingEnabled():
             # non-cc builds only
             command += "-plugin-sql-odbc "
@@ -117,9 +112,11 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             command += "-qt-style-windowsxp "
             command += "-qt-style-windowsvista "
         # all builds
-        command += "-no-phonon -qdbus -dbus-linked "
-        command += "-fast -ltcg -no-vcproj -no-dsp "
-        command += "-nomake demos -nomake examples -stl "
+        command += "-webkit -no-phonon "
+        command += "-qt-libpng -qt-libjpeg -qt-libtiff "
+        command += "-qdbus -dbus-linked -openssl-linked "
+        command += "-fast -ltcg -stl -no-vcproj -no-dsp "
+        command += "-nomake demos -nomake examples "
         command += "%s %s" % ( incdirs, libdirs )
 
         if self.buildType() == "Debug":
@@ -149,6 +146,9 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             utils.deleteFile( os.path.join( self.buildDir(), "plugin", "bearer", "qnmbearer4.dll" ))
             utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "bin" ) , os.path.join( self.installDir(), "bin" ) )
             utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "lib" ) , os.path.join( self.installDir(), "lib" ) )
+            # syncqt expects qconfig.h to be in the install dir and fails if not
+            utils.createDir( os.path.join( self.installDir(), "src", "corelib", "global") )
+            utils.copyFile( os.path.join( self.buildDir(), "src", "corelib", "global", "qconfig.h" ), os.path.join( self.installDir(), "src", "corelib" , "global", "qconfig.h" ) )
             # headers need to be copied using syncqt because of the relative paths
             os.putenv( "PATH", os.path.join( self.sourceDir(), "bin" ) + ";" + os.getenv("PATH") )
             command = os.path.join(self.sourceDir(), "bin", "syncqt.bat")
@@ -158,8 +158,6 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             # 4.7 has a -quiet option, enable it when we switch
             #command += " -quiet"
             utils.system( command )
-            # qconfig.h isn't copied by syncqt
-            utils.copyFile( os.path.join( self.buildDir(), "src", "corelib", "global", "qconfig.h" ), os.path.join( self.installDir(), "include", "QtCore" , "qconfig.h" ) )
             utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "mkspecs" ) , os.path.join( self.installDir(), "mkspecs" ) )
             utils.copySrcDirToDestDir( os.path.join( self.buildDir(), "plugins" ) , os.path.join( self.installDir(), "plugins" ) )
             # create qt.conf 
