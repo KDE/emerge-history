@@ -79,6 +79,17 @@ Commands (must have a packagename):
                         working manifest directory. unmerge only delete unmodified 
                         files by default. You may use the -f or --force option to 
                         let unmerge delete all files unconditional.
+--cleanallbuilds        Clean complete build directory. 
+--cleanbuild            Clean build directory for the specified package. This cleans also 
+                        all the image directories of all targets of the specified package.
+                        available calculate and print digests. 
+--checkdigest           Check digest for the specified package. If no digest is 
+                        available calculate and print digests. 
+--cleanimage            Clean image directory for the specified package and target.
+                        available calculate and print digests. 
+--createpatch           Create source patch file for the specific package based on the 
+                        original archive file or checkout revision of the used software 
+                        revision control system.
 --disable-buildhost     This disables the building for the host.
 --disable-buildtarget   This disables the building for the target.
 
@@ -212,7 +223,7 @@ def handlePackage( category, package, version, buildAction, opts ):
         if( buildAction == "full-package" ):
             success = success and doExec( category, package, version, "package", opts )
 
-    elif ( buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", 
+    elif ( buildAction in [ "fetch", "unpack", "preconfigure", "configure", "compile", "make", "qmerge", "checkdigest",
                             "package", "manifest", "unmerge", "test" , "cleanimage", "cleanbuild", "cleanallbuilds", "createpatch", 
                             "printrev"] and category and package and version ):
         os.putenv( "EMERGE_BUILD_STEP", "" )
@@ -367,7 +378,7 @@ for i in sys.argv:
         ignoreInstalled = True
         buildAction = "install-deps"
     elif ( i in [ "--fetch", "--unpack", "--preconfigure", "--configure", "--compile", "--make",
-                  "--install", "--qmerge", "--manifest", "--package", "--unmerge", "--test",
+                  "--install", "--qmerge", "--manifest", "--package", "--unmerge", "--test", "--checkdigest",
                   "--full-package", "--cleanimage", "--cleanbuild", "--cleanallbuilds", "--createpatch"] ):
         buildAction = i[2:]
     elif ( i == "--print-revision" ):
