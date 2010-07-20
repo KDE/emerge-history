@@ -71,7 +71,7 @@ def main():
         if o in ("-c", "--command"):
             command = a
 
-    packageList, categoryList = portage.get_packages_categories(args[0])
+    packageList, categoryList = portage.getPackagesCategories(args[0])
 
     dep_tree = DependenciesTree()
 

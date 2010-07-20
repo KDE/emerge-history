@@ -476,7 +476,7 @@ def remInstalled( category, package, version, buildType='' ):
         os.rename( tmpdbfile, dbfile )
     return found
 
-def get_packages_categories(packageName, defaultCategory = None):
+def getPackagesCategories(packageName, defaultCategory = None):
 
     if defaultCategory is None:
         if "EMERGE_DEFAULTCATEGORY" in os.environ:

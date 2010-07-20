@@ -292,7 +292,7 @@ def main():
         elif o in ("-j", "--jobs"):
             num_worker = max(1, int(a))
 
-    packageList, categoryList = portage.get_packages_categories(args[0])
+    packageList, categoryList = portage.getPackagesCategories(args[0])
 
     dep_tree = DependenciesTree()
 
@@ -300,7 +300,7 @@ def main():
         dep_tree.add_dependencies(category, package)
 
     builder = ParallelBuilder(command)
-    
+
     with ExecutionContext():
         exit_code = builder.build(dep_tree, num_worker)
 

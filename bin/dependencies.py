@@ -241,7 +241,7 @@ def main():
             if a == "xml": output_type = OUTPUT_XML
             else:          output_type = OUTPUT_DOT
 
-    packageList, categoryList = portage.get_packages_categories(args[0])
+    packageList, categoryList = portage.getPackagesCategories(args[0])
 
     dep_tree = DependenciesTree()
 

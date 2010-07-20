@@ -459,7 +459,7 @@ if updateAll:
             packageList.append( package )
     utils.debug( "Will update packages: " + str (packageList), 1 )
 elif packageName:
-    packageList, categoryList = portage.get_packages_categories(packageName)
+    packageList, categoryList = portage.getPackagesCategories(packageName)
 
 for entry in packageList:
     utils.debug( "%s" % entry, 1 )
