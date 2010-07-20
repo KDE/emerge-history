@@ -49,6 +49,10 @@ class Visitor(object):
         """Called after the children  of the node are visited."""
         return Visitor.CONTINUE_CHILDREN
 
+def nl_separated(node):
+    """Replace ':' by newlines to make target look better in dot output.""" 
+    return str(node).replace(":", r"\n")
+
 class GraphvizCreator(Visitor):
     """Visitor to create DOT files from dependency graphs."""
 
@@ -58,7 +62,8 @@ class GraphvizCreator(Visitor):
         else:                 max_depth = node.max_depth()
         ranks.setdefault(max_depth, set()).add(node)
         for child in node.children:
-            link = '"%s" -> "%s"' % (node, child)
+            link = '"%s" -> "%s"' % (
+                nl_separated(node), nl_separated(child))
             if link not in visited:
                 visited.add(link)
                 out.append(link)
@@ -75,7 +80,7 @@ class GraphvizCreator(Visitor):
 
         for k, v in ranks.iteritems():
             out.append("{ rank=same; ")
-            for n in v: out.append('"%s";' % n)
+            for n in v: out.append('"%s";' % nl_separated(n))
             out.append("}")
 
         out.append("}")
