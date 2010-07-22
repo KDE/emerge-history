@@ -23,7 +23,7 @@ class Builder(object):
         self.command       = command
         self.build_status  = {}
 
-    def recursive_build(self, node):
+    def recursiveBuild(self, node):
 
         name = str(node)
         try:
@@ -35,7 +35,7 @@ class Builder(object):
 
         # build the children
         for child in node.children:
-            okay = self.recursive_build(child)
+            okay = self.recursiveBuild(child)
             if not okay: all_okay = False
 
         # only build node if all of its children are built correctly
@@ -52,7 +52,7 @@ class Builder(object):
 
     def build(self, dep_tree):
         for root in dep_tree.roots:
-            self.recursive_build(root)
+            self.recursiveBuild(root)
 
 def main():
     try:
@@ -76,7 +76,7 @@ def main():
     dep_tree = DependenciesTree()
 
     for category, package in zip(categoryList, packageList):
-        dep_tree.add_dependencies(category, package)
+        dep_tree.addDependencies(category, package)
 
     builder = Builder(command)
 

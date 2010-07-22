@@ -74,7 +74,7 @@ def log(kind, msg):
     print "builder: %s %s %s" % (now(), kind, msg)
     sys.stdout.flush()
 
-def unique_svn_lock_filename():
+def uniqueSvnLockFilename():
     """Generates a unique name for the SVN lock file."""
     dirname = tempfile.gettempdir()
     user    = getpass.getuser()
@@ -94,7 +94,7 @@ class ExecutionContext(object):
     """
 
     def __init__(self):
-        self.svnlock = unique_svn_lock_filename()
+        self.svnlock = uniqueSvnLockFilename()
 
     def __enter__(self): 
         log("start", "all")
@@ -122,7 +122,7 @@ class Job(object):
         self.dep_count = len(node.children)
         self.dep_exit  = 0
 
-    def create_command(self, command):
+    def createCommand(self, command):
         """Fills the given command template with information from the
            corresponding node in the dependency graph.
         """
@@ -144,13 +144,13 @@ class Job(object):
         self.dep_count -= 1
         return self.dep_count < 1
 
-    def trigger_exec(self, command):
+    def triggerExec(self, command):
         """Generates a tuple to enable the workers to execute this job."""
         if self.dep_exit != 0:
             # propagate error
             return (str(self.node), "", self.dep_exit)
         else:
-            return (str(self.node), self.create_command(command))
+            return (str(self.node), self.createCommand(command))
 
 class Worker(Process):
     """An asynchronous working job executor.
@@ -197,7 +197,7 @@ class ParallelBuilder(object):
         """Creates a builder with a given command template."""
         self.command = command
 
-    def build_blocked(self, node, blocked, jobs, ready):
+    def buildBlocked(self, node, blocked, jobs, ready):
         """Recursive working method to create the jobs lists from the
            dependency tree.
         """
@@ -212,7 +212,7 @@ class ParallelBuilder(object):
 
         if node.children:
             for child in node.children:
-                self.build_blocked(child, blocked, jobs, ready)
+                self.buildBlocked(child, blocked, jobs, ready)
                 block_list = blocked.setdefault(str(child), [])
                 block_list.append(job)
         else:
@@ -233,7 +233,7 @@ class ParallelBuilder(object):
         jobs, blocked, ready = {}, {}, set()
 
         for root in dep_tree.roots:
-            self.build_blocked(root, blocked, jobs, ready)
+            self.buildBlocked(root, blocked, jobs, ready)
 
         utils.debug("jobs: %d" % len(jobs))
         utils.debug("blocked: %d" % len(blocked))
@@ -244,7 +244,7 @@ class ParallelBuilder(object):
         for _ in range(num_worker): Worker(todo, done)
 
         for job in ready:
-            todo.put(job.trigger_exec(self.command))
+            todo.put(job.triggerExec(self.command))
 
         ready = None
 
@@ -264,7 +264,7 @@ class ParallelBuilder(object):
 
             for job in blocked_list:
                 if job.unblock(exit_code):
-                    todo.put(job.trigger_exec(self.command))
+                    todo.put(job.triggerExec(self.command))
 
             jobs_left -= 1
 
@@ -297,7 +297,7 @@ def main():
     dep_tree = DependenciesTree()
 
     for category, package in zip(categoryList, packageList):
-        dep_tree.add_dependencies(category, package)
+        dep_tree.addDependencies(category, package)
 
     builder = ParallelBuilder(command)
 

@@ -128,13 +128,13 @@ class SvnSource (VersionSystemSourceBase):
         else:
             cmd = "%s/svn checkout %s %s %s" % (self.svnInstallDir, option, url, sourcedir )
 
-        with utils.LockFile(utils.svn_lock_file_name()):
+        with utils.LockFile(utils.svnLockFileName()):
             return utils.system( cmd )
 
     def createPatch( self ):
         """create patch file from svn source into the related package dir. The patch file is named autocreated.patch"""
         cmd = "%s/svn diff %s > %s" % ( self.svnInstallDir, self.sourceDir(), os.path.join( self.packageDir(), "%s-%s.patch" % ( self.package, str( datetime.date.today() ).replace('-', '') ) ) )
-        with utils.LockFile(utils.svn_lock_file_name()):
+        with utils.LockFile(utils.svnLockFileName()):
             return utils.system( cmd )
 
     def sourceVersion( self ):
@@ -153,7 +153,7 @@ class SvnSource (VersionSystemSourceBase):
         tempfile = open( os.path.join( self.sourceDir().replace('/', '\\'), ".emergesvninfo.tmp" ), "wb+" )
         
         # run the command
-        with utils.LockFile(utils.svn_lock_file_name()):
+        with utils.LockFile(utils.svnLockFileName()):
             utils.system( cmd, outstream=tempfile )
 
         tempfile.seek(os.SEEK_SET)

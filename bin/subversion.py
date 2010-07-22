@@ -116,7 +116,7 @@ class Repository ( tools.Object ):
         if ( self.rinfo.password != None ):
             command = command + " --password " + self.rinfo.password
         log = os.tmpfile()
-        with utils.LockFile(utils.svn_lock_file_name()):
+        with utils.LockFile(utils.svnLockFileName()):
             ret = self.system( command, capture_output=log )
         log.seek( 0 )
         if self.verbose() > 1:
@@ -141,7 +141,7 @@ class Repository ( tools.Object ):
         if ( self.rinfo.password != None ):
             command = command + " --password " + self.rinfo.password
         log = os.tmpfile()
-        with utils.LockFile(utils.svn_lock_file_name()):
+        with utils.LockFile(utils.svnLockFileName()):
             ret = self.system( command, capture_output=log )
         log.seek( 0 )
         if self.verbose() > 1:
@@ -217,7 +217,7 @@ class Repository ( tools.Object ):
                 
             command = "svn status %s" % target
             statuslog = os.tmpfile()
-            with utils.LockFile(utils.svn_lock_file_name()):
+            with utils.LockFile(utils.svnLockFileName()):
                 self.system( command, capture_output=statuslog )
             statuslog.seek( 0 )
             
@@ -256,7 +256,7 @@ class Repository ( tools.Object ):
                 
             command = "svn cleanup %s" % target
             log = os.tmpfile()
-            with utils.LockFile(utils.svn_lock_file_name()):
+            with utils.LockFile(utils.svnLockFileName()):
                 ret = self.system( command, capture_output=log )
             log.seek( 0 )
             if self.verbose() > 1:
@@ -276,7 +276,7 @@ class Repository ( tools.Object ):
         os.chdir( self.rinfo.repodir )
         self.debug( self.rinfo.repodir )
         log = os.tmpfile()
-        with utils.LockFile(utils.svn_lock_file_name()):
+        with utils.LockFile(utils.svnLockFileName()):
             self.system( "svn info", capture_output=log )
         log.seek( 0 )
         infos = dict()

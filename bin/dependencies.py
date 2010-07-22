@@ -41,35 +41,35 @@ class Visitor(object):
     CONTINUE_CHILDREN = 1
     IGNORE_CHILDREN   = 2
 
-    def before_children(self, node, context):
+    def beforeChildren(self, node, context):
         """Called before the children of the node are visited."""
         return Visitor.CONTINUE_CHILDREN
 
-    def after_children(self, node, context):
+    def afterChildren(self, node, context):
         """Called after the children  of the node are visited."""
         return Visitor.CONTINUE_CHILDREN
 
-def nl_separated(node):
+def nlSeparated(node):
     """Replace ':' by newlines to make target look better in dot output.""" 
     return str(node).replace(":", r"\n")
 
 class GraphvizCreator(Visitor):
     """Visitor to create DOT files from dependency graphs."""
 
-    def after_children(self, node, context):
+    def afterChildren(self, node, context):
         visited, out, ranks = context
         if not node.children: max_depth = 666
-        else:                 max_depth = node.max_depth()
+        else:                 max_depth = node.maxDepth()
         ranks.setdefault(max_depth, set()).add(node)
         for child in node.children:
             link = '"%s" -> "%s"' % (
-                nl_separated(node), nl_separated(child))
+                nlSeparated(node), nlSeparated(child))
             if link not in visited:
                 visited.add(link)
                 out.append(link)
         return Visitor.CONTINUE_CHILDREN
 
-    def create_output(self, tree):
+    def createOutput(self, tree):
         visited = set()
         out = [
             'digraph "dependencies" {', 
@@ -80,7 +80,7 @@ class GraphvizCreator(Visitor):
 
         for k, v in ranks.iteritems():
             out.append("{ rank=same; ")
-            for n in v: out.append('"%s";' % nl_separated(n))
+            for n in v: out.append('"%s";' % nlSeparated(n))
             out.append("}")
 
         out.append("}")
@@ -94,7 +94,7 @@ class XMLCreator(Visitor):
         self.nodes_so_far = {}
         self.ignored      = False
 
-    def before_children(self, node, out):
+    def beforeChildren(self, node, out):
         if not isinstance(node, DependenciesNode):
             return Visitor.CONTINUE_CHILDREN
         node_name = str(node)
@@ -117,12 +117,12 @@ class XMLCreator(Visitor):
         out.append(">")
         return Visitor.CONTINUE_CHILDREN
 
-    def after_children(self, node, out):
+    def afterChildren(self, node, out):
         if self.ignored: self.ignored = False
         else:            out.append("</dep>")
         return Visitor.CONTINUE_CHILDREN
 
-    def create_output(self, tree):
+    def createOutput(self, tree):
         out = ['<?xml version="1.0" encoding="UTF-8" ?>\n']
         out.append("<deps>")
         tree.visit(self, out)
@@ -147,18 +147,18 @@ class DependenciesNode(object):
 
     def visit(self, visitor, context):
         """Apply a visitor to this node."""
-        if visitor.before_children(self, context) == Visitor.CONTINUE_CHILDREN:
+        if visitor.beforeChildren(self, context) == Visitor.CONTINUE_CHILDREN:
             for child in self.children:
                 child.visit(visitor, context)
-        visitor.after_children(self, context)
+        visitor.afterChildren(self, context)
 
-    def max_depth(self):
+    def maxDepth(self):
         """Calculates the maximum depth of this node."""
         if not self.parents:
             return 0
         pdepth = -1
         for p in self.parents:
-            d = p.max_depth()
+            d = p.maxDepth()
             if d > pdepth: pdepth = d
         return pdepth + 1
 
@@ -169,7 +169,7 @@ class DependenciesTree(object):
         self.roots    = []
         self.key2node = {}
 
-    def add_dependencies(self, category, package, version = ""):
+    def addDependencies(self, category, package, version = ""):
         """Add a new root dependency tree to this graph."""
 
         pi = portage.PortageInstance
@@ -194,12 +194,12 @@ class DependenciesTree(object):
         except:
             tag = "1"
 
-        node = self.build_dep_node(category, package, version, tag)
+        node = self.buildDepNode(category, package, version, tag)
 
         if not node in self.roots:
             self.roots.append(node)
 
-    def build_dep_node(self, category, package, version, tag):
+    def buildDepNode(self, category, package, version, tag):
         """Recursive method to construct the nodes of the dependency tree."""
         key = "%s-%s-%s-%s" % (category, package, version, tag)
         try:
@@ -211,7 +211,7 @@ class DependenciesTree(object):
         children = []
 
         for t in portage.getDependencies(category, package, version):
-            sub_node = self.build_dep_node(t[0], t[1], t[2], tag)
+            sub_node = self.buildDepNode(t[0], t[1], t[2], tag)
             children.append(sub_node)
 
         node = DependenciesNode(category, package, version, tag, children)
@@ -246,17 +246,24 @@ def main():
             if a == "xml": output_type = OUTPUT_XML
             else:          output_type = OUTPUT_DOT
 
+    # little workaround to not display debug infos in generated output
+    old_emerge_verbose = os.environ.get('EMERGE_VERBOSE')
+    os.environ['EMERGE_VERBOSE'] = '0'
+
     packageList, categoryList = portage.getPackagesCategories(args[0])
 
     dep_tree = DependenciesTree()
 
     for catagory, package in zip(categoryList, packageList):
-        dep_tree.add_dependencies(catagory, package)
+        dep_tree.addDependencies(catagory, package)
+
+    if old_emerge_verbose is not None:
+        os.environ['EMERGE_VERBOSE'] = old_emerge_verbose
 
     if   output_type == OUTPUT_XML: creator = XMLCreator()
     elif output_type == OUTPUT_DOT: creator = GraphvizCreator()
 
-    output = creator.create_output(dep_tree)
+    output = creator.createOutput(dep_tree)
 
     print output
 

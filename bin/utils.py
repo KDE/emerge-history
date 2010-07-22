@@ -36,7 +36,7 @@ import portage_versions
 
 SVN_LOCK_FILE = "emergesvn-%s.lck"
 
-def svn_lock_file_name():
+def svnLockFileName():
     '''Generate a user global svn lock file.
        TODO: generate it smarter to prevent security issues
              and possible collisions.
@@ -440,14 +440,14 @@ def svnFetch( repo, destdir, username = None, password = None ):
             command = command + " --username " + username
         if ( password != None ):
             command = command + " --password " + password
-        with LockFile(svn_lock_file_name()):
+        with LockFile(svnLockFileName()):
             ret = system( command )
     else:
         # already checked out, so only update
         mode = "update"
         os.chdir( path )
         debug( "svn up cwd: %s" % os.getcwd(), 1 )
-        with LockFile(svn_lock_file_name()):
+        with LockFile(svnLockFileName()):
             ret = system( "svn update" )
 
     if ( ret == 0 ):
