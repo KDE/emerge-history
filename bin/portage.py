@@ -20,12 +20,17 @@ def __import__( module ):
         fileHdl = open( module )
         modulename = os.path.basename( module ).replace('.py', '')
 
-        # TODO: Impove importing ...
-        suff_indices, suff_idx = imp.get_suffixes(), 1
-        for idx, suff in enumerate(suff_indices):
-            if suff[0] == ".py": suff_idx = idx; break
+        suff_index = None
+        for suff in imp.get_suffixes():
+            if suff[0] == ".py":
+                suff_index = suff
+                break
+
+        if suff_index is None:
+            utils.die("no .py suffix found")
+
         return imp.load_module( modulename.replace('.', '_'), 
-            fileHdl, module, suff_indices[suff_idx] )
+            fileHdl, module, suff_index )
 
 def rootDir():
     portageroot = os.getenv("EMERGE_PORTAGE_ROOT")
