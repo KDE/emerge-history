@@ -27,7 +27,6 @@ else:               import fcntl
 
 import info
 import portage
-import re
 
 import ConfigParser
 
@@ -231,6 +230,9 @@ def getHttpFile( host, path, destdir, filename ):
     f.close()
     return True
 
+def isCrEol(filename):
+    with open(filename, "rb") as f:
+        return f.readline().endswith("\r\n")
 
 def checkFilesDigests( downloaddir, filenames, digests=None ):
     """check digest of (multiple) files specified by 'filenames' from 'downloaddir'"""
@@ -990,11 +992,22 @@ def putenv(name, value):
     os.putenv( name, value )
     return True
 
-def applyPatch(sourceDir, file, patchLevel='0'):
+def unixToDos(filename):
+    with open(filename, "rb") as f:
+        return f.read().replace('\n', '\r\n')
+
+def applyPatch(sourceDir, f, patchLevel='0'):
     """apply single patch"""
-    cmd = "patch -d %s -p%s < %s" % ( sourceDir, patchLevel, file )    
-    debug("applying patch %s" % ( cmd ), 2)
-    return system( cmd )
+    cmd = "patch -d %s -p%s < %s" % (sourceDir, patchLevel, f)
+    debug("applying patch %s" % cmd, 2)
+    if not isCrEol(f):
+        p = subprocess.Popen([
+            "patch", "-d", sourceDir, "-p", str(patchLevel)],
+            stdin=subprocess.PIPE)
+        p.communicate(unixToDos(f))
+        return p.wait() == 0
+    else:
+        return system( cmd )
 
 def log(fn):
     def inner(*args, **argv):

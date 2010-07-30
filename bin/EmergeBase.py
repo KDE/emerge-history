@@ -106,6 +106,8 @@ class EmergeBase():
             self.__compiler = "msvc2005"
         elif COMPILER == "msvc2008":
             self.__compiler = "msvc2008"
+        elif COMPILER == "msvc2010":
+            self.__compiler = "msvc2010"
         elif COMPILER == "mingw":
             self.__compiler = "mingw"
         elif COMPILER == "mingw4":
@@ -281,7 +283,7 @@ class EmergeBase():
             dir = os.path.join(ROOTDIR, self.buildPlatform())
         elif not self.subinfo.options.merge.destinationPath == None:
             dir = os.path.join( ROOTDIR, self.subinfo.options.merge.destinationPath )
-        elif not self.useBuildTypeRelatedMergeRoot:
+        elif not self.useBuildTypeRelatedMergeRoot or self.subinfo.options.merge.ignoreBuildType:
             dir = ROOTDIR
         elif self.buildType() == 'Debug':
             dir = os.path.join(ROOTDIR,'debug')
