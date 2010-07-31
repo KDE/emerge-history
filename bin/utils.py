@@ -12,6 +12,7 @@ import httplib
 import ftplib
 import os.path
 import sys
+import re
 import urlparse
 import shutil
 import zipfile
