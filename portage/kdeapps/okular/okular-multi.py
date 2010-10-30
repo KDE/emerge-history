@@ -8,6 +8,14 @@ class subinfo(info.infoclass):
     def setDependencies( self ):
         self.hardDependencies['kde/kdebase-runtime'] = 'default'
         self.hardDependencies['kde/kdegraphicslibs'] = 'default'
+        self.hardDependencies['win32libs-sources/zlib-src'] = 'default'
+        self.hardDependencies['win32libs-sources/poppler-src'] = 'default'
+        self.hardDependencies['win32libs-sources/chm-src'] = 'default'
+        self.hardDependencies['win32libs-sources/ebook-tools-src'] = 'default'
+        self.hardDependencies['win32libs-sources/tiff-src'] = 'default'
+        self.hardDependencies['win32libs-sources/djvu-src'] = 'default'
+        self.hardDependencies['win32libs-sources/freetype-src'] = 'default'
+        self.hardDependencies['kdesupport/qca'] = 'default'
 
 from Package.CMakePackageBase import *
         
