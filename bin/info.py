@@ -48,6 +48,12 @@ class infoclass:
         
 
         self.setDependencies()
+        if 'virtual/base' in self.hardDependencies:
+            del self.hardDependencies['virtual/base']
+            
+        if 'gnuwin32/wget' in self.hardDependencies:
+            del self.hardDependencies['gnuwin32/wget']
+            
         self.setTargets()
         self.setSVNTargets()
         self.setBuildTarget()
