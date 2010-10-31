@@ -7,7 +7,7 @@
    
    link: emerge-development-system-dependencies.pdf
    
-   contact: Ralf Habacker
+   contact: Ralf Habacker <ralf.habacker@freenet.de>
    
    tester: Patrick von Reth
    
@@ -38,3 +38,14 @@
             emerge debug: dependency: ['internal', 'ArchiveSource', 'internal', 'svnHEAD', False]          
                
     
+
+2. separate trace messages from verbose messages 
+   In python classes there are trace messages added using utils.debug(). For those methods a different  
+   function utils.trace() should be added. If python has build in trace mode this should be used instead. 
+   Trace message should be printable by using the --trace command line option.
+   
+   state: not started 
+   
+   contact: Ralf Habacker <ralf.habacker@freenet.de>
+   
+   
