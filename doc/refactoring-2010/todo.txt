@@ -48,4 +48,10 @@
    
    contact: Ralf Habacker <ralf.habacker@freenet.de>
    
+3. extend source system 
+    - the recent implementation of the source system have some limitations 
+      - only one type of source either archive or repositories (self.targets, self.svnTargets) 
+      - only one host possible 
+    
+      
    
