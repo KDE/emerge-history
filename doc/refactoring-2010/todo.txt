@@ -70,3 +70,9 @@
    state: not started 
    contact: none 
    
+6. release emerge as installable package bundled with a python installation 
+   
+   link: http://www.winkde.org/pub/kde/ports/win32/emerge/
+
+   state: implemented, testing state 
+   contact: Ralf Habacker <ralf.habacker@freenet.de>
