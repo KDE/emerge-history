@@ -9,8 +9,8 @@ rem * mingw4   - use the mingw gcc compiler (recommended)
 rem * mingw    - use the mingw gcc compiler (gcc Version 3.4.5 - 
 rem               please only use this option if you are exactly 
 rem               sure about the consequences)
-rem * msvc2005 - use the Microsoft Visual C++ 2005 compiler (deprecated, may not work at all) 
 rem * msvc2008 - use the Microsoft Visual C++ 2008 compiler
+rem * msvc2010 - use the Microsoft Visual C++ 2010 compiler (not completly tested) 
 set KDECOMPILER=mingw4
 
 rem Here you can set the architecure for which packages are build. 
@@ -47,8 +47,9 @@ rem set EMERGE_TARGET_ARCHITECTURE=ARMV4I
 rem Here you set the path to your Python installation,
 rem so that Python will be found, when Python scripts are be executed.
 rem By setting this here, you don't have to change the global environment
-rem settings of Windows.
-set PYTHONPATH=%PROGRAM_FILES%\python26
+rem settings of Windows. In case python is distributed with emerge the 
+rem following setting is not used. 
+set PYTHONPATH="%PROGRAM_FILES%\python26"
 
 rem Here you set the path to msys if you want to compile
 rem automake-based projects (only needed for some internal packages).
@@ -56,8 +57,8 @@ set MSYSDIR=%KDEROOT%\msys
 
 rem Here you can adjust the path to your Visual Studio installation if needed
 rem This is used to set up the build environment automatically
-if %KDECOMPILER% == msvc2005 set VSDIR=%PROGRAM_FILES%\Microsoft Visual Studio 8
 if %KDECOMPILER% == msvc2008 set VSDIR=%PROGRAM_FILES%\Microsoft Visual Studio 9
+if %KDECOMPILER% == msvc2010 set VSDIR=%PROGRAM_FILES%\Microsoft Visual Studio 10
 
 rem Here you can adjust the path to the Windows Mobile SDK installation
 rem This is used to set up the cross-compilation environment automatically
@@ -246,7 +247,18 @@ if %EMERGE_USE_SHORT_PATH% == 1 (
     %EMERGE_ROOT_DRIVE%
 )
 
-set PATH=%PYTHONPATH%;%PATH%
+rem use local python installation if present
+if exist %KDEROOT%\emerge\python (
+    set PYTHONPATH=%KDEROOT%\emerge\python
+) else (
+    if %PYTHONPATH% == "" ( 
+       echo Couldn't find local python installation - please set PYTHONPATH in %KDEROOT%\etc\kdesettings.bat ! 
+    )
+)
+
+if NOT %PYTHONPATH% == "" ( 
+    set PATH=%PYTHONPATH%;%PATH%
+)
 
 echo kdesettings.bat executed
 echo KDEROOT     : %KDEROOT%
