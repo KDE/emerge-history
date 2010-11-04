@@ -37,7 +37,6 @@
             emerge debug: dependency: ['internal', 'BinaryBuildSystem', 'internal', 'svnHEAD', False]
             emerge debug: dependency: ['internal', 'ArchiveSource', 'internal', 'svnHEAD', False]          
                
-    
 
 2. separate trace messages from verbose messages 
    In python classes there are trace messages added using utils.debug(). For those methods a different  
@@ -45,13 +44,29 @@
    Trace message should be printable by using the --trace command line option.
    
    state: not started 
-   
    contact: Ralf Habacker <ralf.habacker@freenet.de>
    
 3. extend source system 
     - the recent implementation of the source system have some limitations 
       - only one type of source either archive or repositories (self.targets, self.svnTargets) 
       - only one host possible 
-    
+
+   state: not started 
+   contact: none
       
+4. separate build time dependencies from runtime dependencies 
+   Recent dependencies are a mixture of build and runtime dependencies. This should be separated 
+   This relates also to topic 1 
+   There are still thing to analyze
+    1. how to autodetect if a specific target of a specific package is a static build (no runtime 
+       dependency required) or not 
+   
+   state: started 
+   contact: Patrick Spendrin <ps_ml@gmx.de> 
+
+5. target specific dependencies 
+   Some packages may require a specific target build for a package it depends on, this should be implemented 
+   
+   state: not started 
+   contact: none 
    
