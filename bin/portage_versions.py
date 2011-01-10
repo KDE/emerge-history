@@ -296,7 +296,7 @@ def catpkgsplit(mydata,silent=1):
 	return retval
 
 def catsplit(mydep):
-        return mydep.split("/", 1)
+	return mydep.split("/", 1)
 
 def best(mymatches):
 	"""Accepts None arguments; assumes matches are valid."""
