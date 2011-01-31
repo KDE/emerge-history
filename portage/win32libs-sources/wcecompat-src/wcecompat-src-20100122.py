@@ -5,7 +5,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['gitHEAD'] = 'git://github.com/kromain/wcecompat.git'
+        self.svnTargets['gitHEAD'] = 'git://github.com/kromain/wcecompat.git|komo3|'
         self.defaultTarget = 'gitHEAD'
 
     def setDependencies( self ):
