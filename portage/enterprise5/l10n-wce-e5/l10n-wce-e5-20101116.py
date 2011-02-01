@@ -3,7 +3,7 @@ import info
 
 class subinfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/l10n-kde4/%s'
+        self.svnTargets['svnHEAD'] = 'branches/work/komo/l10n-kde4/%s'
         self.defaultTarget = 'svnHEAD'
 
     def setDependencies( self ):
@@ -78,7 +78,7 @@ class Package(PackageBase, SvnSource, CMakeBuildSystem, KDEWinPackager):
 
 class MainInfo(info.infoclass):
     def setTargets( self ):
-        self.svnTargets['svnHEAD'] = 'trunk/l10n-kde4/scripts'
+        self.svnTargets['svnHEAD'] = 'branches/work/komo/l10n-kde4/scripts'
         self.defaultTarget = 'svnHEAD'
         # all targets in svn
         self.languages  = 'af ar be bg bn bn_IN br ca cs csb cy da de '
