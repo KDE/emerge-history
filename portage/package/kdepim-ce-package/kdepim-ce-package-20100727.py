@@ -57,7 +57,9 @@ class MainPackage(CMakePackageBase):
                             "mail-90.png",
                             "notes-90.png",
                             "organizer-90.png",
-                            "tasks-90.png" ]
+                            "tasks-90.png",
+                            "kdepim-90.png",
+                            "kleo-90.png" ]
     def execute(self):
         (command, option) = self.getAction()
         if self.isHostBuild(): return True

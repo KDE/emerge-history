@@ -22,11 +22,13 @@ HKLM, Drivers\GnuPG_Device, dll, 0, gpgcedev.dll
 HKLM, Drivers\GnuPG_Device, prefix, 0,  GPG
 HKLM, Drivers\GnuPG_Device, Index, 0x00010001, 1
 HKLM, Software\GNU\GnuPG, Install Directory, 0, %CE1%/Kontact-Mobile/bin
-HKLM, Security\Shell\StartInfo\Start\Mail.lnk, Icon, 0, %CE1%/Kontact-Mobile/share/icons/mail-90.png
-HKLM, Security\Shell\StartInfo\Start\Notizen.lnk, Icon, 0, %CE1%/Kontact-Mobile/share/icons/notes-90.png
-HKLM, Security\Shell\StartInfo\Start\Kalender.lnk, Icon, 0, %CE1%/Kontact-Mobile/share/icons/organizer-90.png
-HKLM, Security\Shell\StartInfo\Start\Kontakte.lnk, Icon, 0, %CE1%/Kontact-Mobile/share/icons/contacts-90.png
-HKLM, Security\Shell\StartInfo\Start\Aufgaben.lnk, Icon, 0, %CE1%/Kontact-Mobile/share/icons/tasks-90.png
+HKLM, Security\Shell\StartInfo\Start\Kontact Touch, Icon, 0, %CE1%/Kontact-Mobile/share/icons/kdepim-90.png
+HKLM, Security\Shell\StartInfo\Start\Kontact Touch\Mail.lnk, Icon, 0, %CE1%/Kontact-Mobile/share/icons/mail-90.png
+HKLM, Security\Shell\StartInfo\Start\Kontact Touch\Notizen.lnk, Icon, 0, %CE1%/Kontact-Mobile/share/icons/notes-90.png
+HKLM, Security\Shell\StartInfo\Start\Kontact Touch\Kalender.lnk, Icon, 0, %CE1%/Kontact-Mobile/share/icons/organizer-90.png
+HKLM, Security\Shell\StartInfo\Start\Kontact Touch\Kontakte.lnk, Icon, 0, %CE1%/Kontact-Mobile/share/icons/contacts-90.png
+HKLM, Security\Shell\StartInfo\Start\Kontact Touch\Aufgaben.lnk, Icon, 0, %CE1%/Kontact-Mobile/share/icons/tasks-90.png
+HKLM, Security\Shell\StartInfo\Start\Kontact Touch\Kleopatra.lnk, Icon, 0, %CE1%/Kontact-Mobile/share/icons/kleo-90.png
 
 [Autostart]
 dbus-launch.exe,0,dbus-launch.exe
@@ -48,5 +50,5 @@ $SOURCEDISKFILES
 
 [DestinationDirs]
 $DESTINATIONDIRS
-Shortcuts = 0,%CE11%
+Shortcuts = 0,%CE11%\Kontact Touch
 Autostart = 0,%CE4%
