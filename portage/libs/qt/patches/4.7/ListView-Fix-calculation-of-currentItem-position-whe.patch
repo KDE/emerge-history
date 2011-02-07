@@ -1,0 +1,46 @@
+From 56bc28c2587a3e3fa1ab15d0cb2f3b47c66c3556 Mon Sep 17 00:00:00 2001
+From: Andreas Holzammer <andreas.holzammer@kdab.com>
+Date: Mon, 7 Feb 2011 15:09:26 +0100
+Subject: [PATCH] ListView: Fix calculation of currentItem position when out of view.
+
+The calculation of position of currentItem when it is out of the
+visible area was bogus.
+
+Task-number: QTBUG-15525
+Reviewed-by: Bea Lam
+---
+ .../graphicsitems/qdeclarativelistview.cpp         |   12 ++++++++----
+ 1 files changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/src/declarative/graphicsitems/qdeclarativelistview.cpp b/src/declarative/graphicsitems/qdeclarativelistview.cpp
+index 6fd3b71..7286be9 100644
+--- a/src/declarative/graphicsitems/qdeclarativelistview.cpp
++++ b/src/declarative/graphicsitems/qdeclarativelistview.cpp
+@@ -776,16 +776,20 @@ void QDeclarativeListViewPrivate::layout()
+         return;
+     }
+     if (!visibleItems.isEmpty()) {
+-        qreal oldEnd = visibleItems.last()->endPosition();
++        bool fixedCurrent = currentItem && visibleItems.first()->item == currentItem->item;
++        qreal sum = visibleItems.first()->size();
+         qreal pos = visibleItems.first()->endPosition() + spacing + 1;
+         for (int i=1; i < visibleItems.count(); ++i) {
+             FxListItem *item = visibleItems.at(i);
+             item->setPosition(pos);
+             pos += item->size() + spacing;
++            sum += item->size();
++            fixedCurrent = fixedCurrent || (currentItem && item->item == currentItem->item);
+         }
+-        // move current item if it is after the visible items.
+-        if (currentItem && currentIndex > lastVisibleIndex())
+-            currentItem->setPosition(currentItem->position() + (visibleItems.last()->endPosition() - oldEnd));
++        averageSize = qRound(sum / visibleItems.count());
++        // move current item if it is not a visible item.
++        if (currentIndex >= 0 && currentItem && !fixedCurrent)
++            currentItem->setPosition(positionAt(currentIndex));
+     }
+     q->refill();
+     minExtentDirty = true;
+-- 
+1.7.0.2.msysgit.0
+
