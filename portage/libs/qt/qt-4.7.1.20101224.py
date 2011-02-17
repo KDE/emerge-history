@@ -145,6 +145,8 @@ class Package(PackageBase,GitSource, QMakeBuildSystem, KDEWinPackager):
             libdirs += " -L \"" + os.path.join( self.mysql_server.installDir(), "lib" ) + "\""
             libdirs += " -l libmysql "
         else:
+            utils.copyFile( os.path.join( self.packageDir(), "configure.exe" ),
+                    os.path.join( self.sourceDir(), "configure.exe" ) )
             utils.copyFile( os.path.join( self.packageDir(), "sources", "qconfig-kde-wince.h" ),
                     os.path.join( self.sourceDir(), "src", "corelib" , "global", "qconfig-kde-wince.h" ) )
             utils.copyFile( os.path.join( self.packageDir(), "sources", "new.cpp" ),
