@@ -1,0 +1,4 @@
+the emerge repository in svn has been marked readonly and will stay at this place only for a short time.
+Emerge development happens from now on in the git repository. Please use that repository instead.
+git@git.kde.org:emerge.git
+For further questions please ask on kde-windows@kde.org .
