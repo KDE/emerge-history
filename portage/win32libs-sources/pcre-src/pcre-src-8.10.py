@@ -4,7 +4,7 @@ from Package.CMakePackageBase import *
 class subinfo( info.infoclass ):
     def setTargets( self ):
         for ver in [ '7.9', '8.00', '8.02', '8.10' ]:
-            self.targets[ ver ] = 'ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-' + ver + '.tar.bz2'
+            self.targets[ ver ] = 'http://downloads.sourceforge.net/project/pcre/pcre/'+ver+'/pcre-'+ver+'.tar.bz2'
             self.targetInstSrc[ ver ] = 'pcre-' + ver
         self.patchToApply[ '8.10' ] = [ ( "pcre-8.10-20101125.diff", 1 ) ]
         if emergePlatform.isCrossCompilingEnabled():
